@@ -19,8 +19,8 @@ func (s *TaskService) GetAllTasks() ([]Task, error) {
 func (s *TaskService) PatchTask(id uint, task Task) (Task, error) {
 	return s.repo.PatchTaskByID(id, task)
 }
-func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
-	return s.repo.UpdateTaskByID(id, task)
+func (s *TaskService) UpdateTaskByID(task Task) (Task, error) {
+	return s.repo.UpdateTaskByID(task.ID, task)
 }
 
 func (s *TaskService) DeleteTask(id uint) error {

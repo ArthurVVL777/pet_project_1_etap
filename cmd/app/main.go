@@ -1,33 +1,36 @@
 package main
 
 import (
-	"github.com/labstack/echo/v4"             // Импортируем библиотеку Echo для работы с HTTP-запросами.
-	"pet_project_1_etap/internal/database"    // Импортируем пакет для работы с базой данных.
-	"pet_project_1_etap/internal/handlers"    // Импортируем пакет с обработчиками HTTP-запросов.
-	"pet_project_1_etap/internal/taskService" // Импортируем пакет с сервисом задач.
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"log"
+	"pet_project_1_etap/internal/database"
+	"pet_project_1_etap/internal/handlers"
+	"pet_project_1_etap/internal/taskService"
+	"pet_project_1_etap/internal/web/tasks"
 )
 
 func main() {
-	// Инициализация базы данных
-	database.InitDB()                            // Вызываем функцию InitDB для установки соединения с базой данных.
-	database.DB.AutoMigrate(&taskService.Task{}) // Автоматически применяем миграции для структуры Task, создавая необходимые таблицы в БД.
+	database.InitDB()
+	database.DB.AutoMigrate(&taskService.Task{})
 
-	// Создание репозитория и сервиса
-	repo := taskService.NewTaskRepository(database.DB) // Создаем новый экземпляр репозитория задач, передавая подключение к базе данных.
-	service := taskService.NewService(repo)            // Создаем новый экземпляр сервиса задач, передавая созданный репозиторий.
+	repo := taskService.NewTaskRepository(database.DB)
+	service := taskService.NewService(repo)
 
-	// Создание обработчиков
-	handler := handlers.NewHandler(service) // Создаем новый экземпляр обработчиков, передавая созданный сервис задач.
+	handler := handlers.NewHandler(service)
 
-	// Создание нового экземпляра Echo
-	e := echo.New() // Инициализируем новый экземпляр Echo для обработки HTTP-запросов.
+	// Инициализируем echo
+	e := echo.New()
 
-	// Определение маршрутов
-	e.GET("/tasks", handler.GetTasksHandler)
-	e.POST("/tasks", handler.PostTaskHandler)
-	e.PUT("/tasks/{id}", handler.UpdateHandler)
-	e.PATCH("/tasks/{id}", handler.PatchHandler)
-	e.DELETE("/tasks/{id}", handler.DeleteHandler)
-	// Запуск сервера на порту 8080
-	e.Logger.Fatal(e.Start(":8080")) // Запускаем сервер на порту 8080 и логируем ошибки, если они возникнут.
+	// используем Logger и Recover
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	// Прикол для работы в echo. Передаем и регистрируем хендлер в echo
+	strictHandler := tasks.NewStrictHandler(handler, nil) // тут будет ошибка
+	tasks.RegisterHandlers(e, strictHandler)
+
+	if err := e.Start(":8080"); err != nil {
+		log.Fatalf("failed to start with err: %v", err)
+	}
 }

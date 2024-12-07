@@ -35,6 +35,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+    patch:
+      summary: Update an existing task
+      tags:
+        - tasks
+      requestBody:
+        description: The task data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task:
+                  type: string
+                is_done:
+                  type: boolean
+      responses:
+        '200':
+          description: The updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /tasks/{id}:
+    delete:
+      summary: Delete a task by ID
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the task to delete
+          schema:
+            type: integer
+            format: uint
+      responses:
+        '204':
+          description: Task deleted successfully
 
 components:
   schemas:

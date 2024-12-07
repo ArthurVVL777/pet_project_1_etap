@@ -41,20 +41,19 @@ func (r *taskRepository) GetAllTasks() ([]Task, error) {
 
 // UpdateTaskByID обновляет задачу по идентификатору.
 func (r *taskRepository) UpdateTaskByID(id uint, task Task) (Task, error) {
-	var existingTask Task // Объявляем переменную для хранения существующей задачи.
+	var existingTask Task
 
-	if err := r.db.First(&existingTask, id).Error; err != nil { // Ищем задачу по ID.
-		return Task{}, err // Если задача не найдена или произошла ошибка, возвращаем пустую задачу и ошибку.
+	if err := r.db.First(&existingTask, id).Error; err != nil {
+		return Task{}, err
 	}
 
-	// Обновляем поля существующей задачи новыми значениями из переданного объекта task.
 	existingTask.Task = task.Task
 	existingTask.IsDone = task.IsDone
 
-	if err := r.db.Save(&existingTask).Error; err != nil { // Сохраняем изменения в БД.
-		return Task{}, err // Если произошла ошибка при сохранении, возвращаем пустую задачу и ошибку.
+	if err := r.db.Save(&existingTask).Error; err != nil {
+		return Task{}, err
 	}
-	return existingTask, nil // Возвращаем обновленную задачу и nil как ошибку.
+	return existingTask, nil
 }
 
 // PatchTaskByID частично обновляет задачу по идентификатору.
