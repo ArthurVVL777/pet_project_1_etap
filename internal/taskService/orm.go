@@ -8,7 +8,7 @@ type Message struct {
 
 // Task представляет задачу с её деталями.
 type Task struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
+	ID      uint   //`json:"id" gorm:"primaryKey"`
 	Task    string `json:"task"`
 	IsDone  bool   `json:"is_done"`
 	Message string `json:"message"`

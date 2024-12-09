@@ -84,21 +84,14 @@ func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksReques
 }
 
 func (h *Handler) DeleteTasksId(ctx context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
-	// Если используется Path
-	taskID := request.Path.Id // Убедитесь, что Path и Id существуют
-
-	// Если используется Id напрямую
-	// taskID := request.Id
-
+	taskID := request.Path.Id
 	err := h.Service.DeleteTask(taskID)
 	if err != nil {
 		return nil, err // Возвращаем ошибку, если удаление не удалось
 	}
-
 	// Возвращаем успешный ответ без тела
-	return tasks.DeleteTasksId204Response{}, nil // Убедитесь, что тип определен правильно
+	return tasks.DeleteTasksId204Response{}, nil
 }
-
 func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{
 		Service: service,

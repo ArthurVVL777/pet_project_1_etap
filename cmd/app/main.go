@@ -26,7 +26,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Прикол для работы в echo. Передаем и регистрируем хендлер в echo
+	//  Передаем и регистрируем хендлер в echo
 	strictHandler := tasks.NewStrictHandler(handler, nil) // тут будет ошибка
 	tasks.RegisterHandlers(e, strictHandler)
 
