@@ -47,6 +47,9 @@ paths:
             schema:
               type: object
               properties:
+                id:       # Добавлено поле для ID задачи
+                  type: integer
+                  format: uint
                 task:
                   type: string
                 is_done:
@@ -86,4 +89,4 @@ components:
         task:
           type: string
         is_done:
-          type: boolean
+          type: boolean # Исправлено на boolean вместо boolea.

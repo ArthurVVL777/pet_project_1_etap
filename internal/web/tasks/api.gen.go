@@ -23,6 +23,7 @@ type Task struct {
 
 // PatchTasksJSONBody defines parameters for PatchTasks.
 type PatchTasksJSONBody struct {
+	Id     *uint   `json:"id,omitempty"`
 	IsDone *bool   `json:"is_done,omitempty"`
 	Task   *string `json:"task,omitempty"`
 }
@@ -149,9 +150,6 @@ func (response GetTasks200JSONResponse) VisitGetTasksResponse(w http.ResponseWri
 }
 
 type PatchTasksRequestObject struct {
-	Path struct {
-		Id uint `json:"id"` // Добавляем поле для идентификатора задачи
-	} `json:"path"`
 	Body *PatchTasksJSONRequestBody
 }
 
@@ -186,9 +184,7 @@ func (response PostTasks201JSONResponse) VisitPostTasksResponse(w http.ResponseW
 }
 
 type DeleteTasksIdRequestObject struct {
-	Path struct {
-		Id uint `json:"id"` // Убедитесь, что это поле существует
-	} `json:"path"`
+	Id uint `json:"id"`
 }
 
 type DeleteTasksIdResponseObject interface {
@@ -316,7 +312,7 @@ func (sh *strictHandler) PostTasks(ctx echo.Context) error {
 func (sh *strictHandler) DeleteTasksId(ctx echo.Context, id uint) error {
 	var request DeleteTasksIdRequestObject
 
-	//request.Id = id
+	request.Id = id
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.DeleteTasksId(ctx.Request().Context(), request.(DeleteTasksIdRequestObject))

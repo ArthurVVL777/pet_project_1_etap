@@ -8,11 +8,11 @@ type Message struct {
 
 // Task представляет задачу с её деталями.
 type Task struct {
-	ID      uint   //`json:"id" gorm:"primaryKey"`
+	ID      uint   `json:"id" gorm:"primaryKey"`
 	Task    string `json:"task"`
 	IsDone  bool   `json:"is_done"`
 	Message string `json:"message"`
-	Text    string
+	Text    string `json:"text"` // Это поле может быть убрано или изменено в зависимости от ваших нужд.
 }
 
 // Response представляет структуру ответа для API.
@@ -20,7 +20,10 @@ type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
+
+// PatchTasksJSONRequestBody определяет тело запроса для PATCH задач.
 type PatchTasksJSONRequestBody struct {
-	Task   *string `json:"task"`    // Поле для текста задачи
-	IsDone *bool   `json:"is_done"` // Поле для статуса завершенности
+	Task   *string `json:"task"`
+	IsDone *bool   `json:"is_done"`
+	Id     *uint   `json:"id"` // Добавлено поле для ID задачи
 }

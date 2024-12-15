@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"github.com/labstack/gommon/log"
 	"pet_project_1_etap/internal/taskService"
 	"pet_project_1_etap/internal/web/tasks"
 )
@@ -56,7 +57,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 }
 
 func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksRequestObject) (tasks.PatchTasksResponseObject, error) {
-	taskID := request.Path.Id
+	taskID := *request.Body.Id // Разыменовываем указатель на ID задачи
 
 	taskRequest := request.Body
 	if taskRequest == nil {
@@ -71,6 +72,7 @@ func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksReques
 
 	updatedTask, err := h.Service.UpdateTaskByID(taskToUpdate)
 	if err != nil {
+		log.Printf("Error updating task with ID %d: %v", taskID, err)
 		return nil, err
 	}
 
@@ -84,14 +86,16 @@ func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksReques
 }
 
 func (h *Handler) DeleteTasksId(ctx context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
-	taskID := request.Path.Id
+	taskID := request.Id // Извлекаем ID задачи из параметров запроса
+
 	err := h.Service.DeleteTask(taskID)
 	if err != nil {
 		return nil, err // Возвращаем ошибку, если удаление не удалось
 	}
-	// Возвращаем успешный ответ без тела
-	return tasks.DeleteTasksId204Response{}, nil
+
+	return tasks.DeleteTasksId204Response{}, nil // Возвращаем успешный ответ без тела
 }
+
 func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{
 		Service: service,

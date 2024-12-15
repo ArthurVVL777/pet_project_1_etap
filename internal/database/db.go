@@ -11,13 +11,13 @@ var DB *gorm.DB
 
 // InitDB инициализирует базу данных.
 func InitDB() {
-	// Строка подключения к базе данных (DSN).
 	dsn := "host=localhost user=postgres password=yourpassword dbname=postgres port=5432 sslmode=disable"
+
 	var err error // Объявляем переменную для хранения ошибок.
 
-	// Открываем подключение к базе данных с использованием GORM и драйвера PostgreSQL.
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil { // Проверяем, произошла ли ошибка при подключении к базе данных.
-		log.Fatal("Failed to connect to database: ", err) // Если ошибка есть, логируем её и завершаем программу.
+
+	if err != nil {
+		log.Fatal("Failed to connect to database: ", err) // Логируем ошибку и завершаем программу.
 	}
 }
