@@ -1,12 +1,11 @@
 package database
 
 import (
-	"gorm.io/driver/postgres" // Импортируем драйвер PostgreSQL для GORM.
-	"gorm.io/gorm"            // Импортируем основной пакет GORM для работы с ORM.
-	"log"                     // Импортируем пакет для логирования ошибок.
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"log"
 )
 
-// DB - экспортируемая переменная для хранения подключения к базе данных.
 var DB *gorm.DB
 
 // InitDB инициализирует базу данных.

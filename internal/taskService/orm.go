@@ -12,7 +12,7 @@ type Task struct {
 	Task    string `json:"task"`
 	IsDone  bool   `json:"is_done"`
 	Message string `json:"message"`
-	Text    string `json:"text"` // Это поле может быть убрано или изменено в зависимости от ваших нужд.
+	Text    string `json:"text"`
 }
 
 // Response представляет структуру ответа для API.

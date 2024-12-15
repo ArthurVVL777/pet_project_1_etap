@@ -47,7 +47,7 @@ paths:
             schema:
               type: object
               properties:
-                id:       # Добавлено поле для ID задачи
+                id:
                   type: integer
                   format: uint
                 task:
@@ -85,8 +85,8 @@ components:
       properties:
         id:
           type: integer
-          format: uint # так как в БД айди это только положительные числа.
+          format: uint
         task:
           type: string
         is_done:
-          type: boolean # Исправлено на boolean вместо boolea.
+          type: boolean

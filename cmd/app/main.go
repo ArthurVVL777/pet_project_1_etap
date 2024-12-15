@@ -19,7 +19,6 @@ func main() {
 
 	handler := handlers.NewHandler(service)
 
-	// Инициализируем echo
 	e := echo.New()
 
 	// используем Logger и Recover
