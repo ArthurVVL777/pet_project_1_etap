@@ -6,8 +6,9 @@ import (
 
 // TaskRepository определяет методы для работы с задачами в БД.
 type TaskRepository interface {
-	CreateTask(task Task) (Task, error)              // Метод для создания новой задачи.
-	GetAllTasks() ([]Task, error)                    // Метод для получения всех задач.
+	CreateTask(task Task) (Task, error) // Метод для создания новой задачи.
+	GetAllTasks() ([]Task, error)       // Метод для получения всех задач.
+	GetTaskByID(id uint) (Task, error)
 	UpdateTaskByID(id uint, task Task) (Task, error) // Метод для обновления задачи по ID.
 	PatchTaskByID(id uint, task Task) (Task, error)  // Метод для частичного обновления задачи по ID.
 	DeleteTaskByID(id uint) error                    // Метод для удаления задачи по ID.
@@ -39,21 +40,31 @@ func (r *taskRepository) GetAllTasks() ([]Task, error) {
 	return tasks, err              // Возвращаем массив задач и возможную ошибку.
 }
 
+// GetTaskByID возвращает задачу по идентификатору.
+func (r *taskRepository) GetTaskByID(id uint) (Task, error) {
+	var task Task
+	if err := r.db.First(&task, id).Error; err != nil {
+		return Task{}, err // Возвращаем ошибку, если задача не найдена
+	}
+	return task, nil // Возвращаем найденную задачу
+}
+
 // UpdateTaskByID обновляет задачу по идентификатору.
 func (r *taskRepository) UpdateTaskByID(id uint, task Task) (Task, error) {
 	var existingTask Task
-
 	if err := r.db.First(&existingTask, id).Error; err != nil {
-		return Task{}, err
+		return Task{}, err // Возвращаем ошибку если задача не найдена
 	}
 
+	// Обновляем поля задачи
 	existingTask.Task = task.Task
 	existingTask.IsDone = task.IsDone
 
 	if err := r.db.Save(&existingTask).Error; err != nil {
-		return Task{}, err
+		return Task{}, err // Возвращаем ошибку если не удалось сохранить изменения
 	}
-	return existingTask, nil
+
+	return existingTask, nil // Возвращаем обновленную задачу
 }
 
 // PatchTaskByID частично обновляет задачу по идентификатору.

@@ -58,19 +58,29 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 
 func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksRequestObject) (tasks.PatchTasksResponseObject, error) {
 	taskID := *request.Body.Id // Разыменовываем указатель на ID задачи
-
 	taskRequest := request.Body
+
 	if taskRequest == nil {
 		return nil, fmt.Errorf("request body cannot be nil")
 	}
 
-	taskToUpdate := taskService.Task{
-		ID:     taskID,
-		Text:   *taskRequest.Task,
-		IsDone: *taskRequest.IsDone,
+	// Получаем существующую задачу из базы данных
+	existingTask, err := h.Service.GetTaskByID(taskID)
+	if err != nil {
+		return nil, fmt.Errorf("task not found: %v", err)
 	}
 
-	updatedTask, err := h.Service.UpdateTaskByID(taskToUpdate)
+	// Обновляем только те поля, которые были переданы в запросе
+	if taskRequest.Task != nil {
+		existingTask.Task = *taskRequest.Task // Обновляем текст задачи только если он не nil
+	}
+
+	if taskRequest.IsDone != nil {
+		existingTask.IsDone = *taskRequest.IsDone // Обновляем статус завершенности только если он не nil
+	}
+
+	// Сохраняем обновленную задачу в базе данных
+	updatedTask, err := h.Service.UpdateTaskByID(existingTask)
 	if err != nil {
 		log.Printf("Error updating task with ID %d: %v", taskID, err)
 		return nil, err
@@ -78,7 +88,7 @@ func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksReques
 
 	response := tasks.PatchTasks200JSONResponse{
 		Id:     &updatedTask.ID,
-		Task:   &updatedTask.Text,
+		Task:   &updatedTask.Task,
 		IsDone: &updatedTask.IsDone,
 	}
 

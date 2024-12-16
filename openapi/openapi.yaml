@@ -50,10 +50,15 @@ paths:
                 id:
                   type: integer
                   format: uint
+                  description: The ID of the task to update (required)
                 task:
                   type: string
+                  description: The new task description (optional)
                 is_done:
                   type: boolean
+                  description: The completion status of the task (optional)
+              required:
+                - id  # Обязательно указывать ID задачи для обновления.
       responses:
         '200':
           description: The updated task
@@ -86,7 +91,10 @@ components:
         id:
           type: integer
           format: uint
+          description: The unique identifier for the task.
         task:
           type: string
+          description: The description of the task.
         is_done:
           type: boolean
+          description: Indicates whether the task is completed.
