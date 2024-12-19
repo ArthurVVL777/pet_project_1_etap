@@ -6,9 +6,9 @@ import (
 
 // TaskRepository определяет методы для работы с задачами в БД.
 type TaskRepository interface {
-	CreateTask(task Task) (Task, error) // Метод для создания новой задачи.
-	GetAllTasks() ([]Task, error)       // Метод для получения всех задач.
-	GetTaskByID(id uint) (Task, error)
+	CreateTask(task Task) (Task, error)              // Метод для создания новой задачи.
+	GetAllTasks() ([]Task, error)                    // Метод для получения всех задач.
+	GetTaskByID(id uint) (Task, error)               // Метод для получения задачи по ID.
 	UpdateTaskByID(id uint, task Task) (Task, error) // Метод для обновления задачи по ID.
 	PatchTaskByID(id uint, task Task) (Task, error)  // Метод для частичного обновления задачи по ID.
 	DeleteTaskByID(id uint) error                    // Метод для удаления задачи по ID.
@@ -78,7 +78,7 @@ func (r *taskRepository) PatchTaskByID(id uint, task Task) (Task, error) {
 	if task.Task != "" {
 		existingTask.Task = task.Task
 	}
-	if task.IsDone {
+	if task.IsDone != existingTask.IsDone { // Обновляем только если значение изменилось
 		existingTask.IsDone = task.IsDone
 	}
 

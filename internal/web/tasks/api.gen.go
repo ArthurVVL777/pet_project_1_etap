@@ -14,6 +14,27 @@ import (
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 )
 
+// PatchTaskRequestBody defines model for PatchTaskRequestBody.
+type PatchTaskRequestBody struct {
+	// Id The unique identifier for the task (optional).
+	Id *uint `json:"id,omitempty"`
+
+	// IsDone The completion status of the task (optional).
+	IsDone *bool `json:"is_done,omitempty"`
+
+	// Task The new task description (optional).
+	Task *string `json:"task,omitempty"`
+}
+
+// PostTaskRequestBody defines model for PostTaskRequestBody.
+type PostTaskRequestBody struct {
+	// IsDone The completion status of the task (optional).
+	IsDone *bool `json:"is_done,omitempty"`
+
+	// Task The new task description (required).
+	Task *string `json:"task,omitempty"`
+}
+
 // Task defines model for Task.
 type Task struct {
 	// Id The unique identifier for the task.
@@ -22,27 +43,27 @@ type Task struct {
 	// IsDone Indicates whether the task is completed.
 	IsDone *bool `json:"is_done,omitempty"`
 
+	// Message Additional message related to the task.
+	Message *string `json:"message,omitempty"`
+
 	// Task The description of the task.
 	Task *string `json:"task,omitempty"`
+
+	// Text Additional text related to the task.
+	Text *string `json:"text,omitempty"`
 }
 
-// PatchTasksIdJSONBody defines parameters for PatchTasksId.
-type PatchTasksIdJSONBody struct {
-	// Id The unique identifier for the task.
-	Id *uint `json:"id,omitempty"`
-
-	// IsDone The completion status of the task (optional)
-	IsDone *bool `json:"is_done,omitempty"`
-
-	// Task The new task description (optional)
-	Task *string `json:"task,omitempty"`
+// PostTasksParams defines parameters for PostTasks.
+type PostTasksParams struct {
+	// Id The ID of the task to create (optional)
+	Id uint `form:"id" json:"id"`
 }
 
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
-type PostTasksJSONRequestBody = Task
+type PostTasksJSONRequestBody = PostTaskRequestBody
 
 // PatchTasksIdJSONRequestBody defines body for PatchTasksId for application/json ContentType.
-type PatchTasksIdJSONRequestBody PatchTasksIdJSONBody
+type PatchTasksIdJSONRequestBody = PatchTaskRequestBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -51,7 +72,7 @@ type ServerInterface interface {
 	GetTasks(ctx echo.Context) error
 	// Create a new task
 	// (POST /tasks)
-	PostTasks(ctx echo.Context) error
+	PostTasks(ctx echo.Context, params PostTasksParams) error
 	// Delete a task by ID
 	// (DELETE /tasks/{id})
 	DeleteTasksId(ctx echo.Context, id uint) error
@@ -78,8 +99,17 @@ func (w *ServerInterfaceWrapper) GetTasks(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PostTasks(ctx echo.Context) error {
 	var err error
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostTasksParams
+	// ------------- Required query parameter "id" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "id", ctx.QueryParams(), &params.Id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostTasks(ctx)
+	err = w.Handler.PostTasks(ctx, params)
 	return err
 }
 
@@ -167,7 +197,8 @@ func (response GetTasks200JSONResponse) VisitGetTasksResponse(w http.ResponseWri
 }
 
 type PostTasksRequestObject struct {
-	Body *PostTasksJSONRequestBody
+	Params PostTasksParams
+	Body   *PostTasksJSONRequestBody
 }
 
 type PostTasksResponseObject interface {
@@ -269,8 +300,10 @@ func (sh *strictHandler) GetTasks(ctx echo.Context) error {
 }
 
 // PostTasks operation middleware
-func (sh *strictHandler) PostTasks(ctx echo.Context) error {
+func (sh *strictHandler) PostTasks(ctx echo.Context, params PostTasksParams) error {
 	var request PostTasksRequestObject
+
+	request.Params = params
 
 	var body PostTasksJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {

@@ -1,36 +1,43 @@
 package taskService
 
+// TaskService представляет сервис для работы с задачами.
 type TaskService struct {
-	repo TaskRepository
+	repo TaskRepository // Репозиторий для работы с задачами в БД.
 }
 
+// NewService создает новый экземпляр TaskService с заданным репозиторием.
 func NewService(repo TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
+// CreateTask создает новую задачу через репозиторий.
 func (s *TaskService) CreateTask(task Task) (Task, error) {
 	return s.repo.CreateTask(task)
 }
 
+// GetAllTasks возвращает все задачи через репозиторий.
 func (s *TaskService) GetAllTasks() ([]Task, error) {
 	return s.repo.GetAllTasks()
 }
 
+// GetTaskByID возвращает задачу по идентификатору через репозиторий.
 func (s *TaskService) GetTaskByID(id uint) (Task, error) {
 	return s.repo.GetTaskByID(id)
 }
 
-// Изменяем метод PatchTask для поддержки обновления по ID
+// PatchTask частично обновляет задачу по идентификатору.
 func (s *TaskService) PatchTask(id uint, task Task) (Task, error) {
+	// Здесь можно добавить валидацию или логику перед обновлением
 	return s.repo.PatchTaskByID(id, task)
 }
 
-// Обновляем метод UpdateTaskByID для поддержки передачи ID
+// UpdateTaskByID обновляет задачу по идентификатору.
 func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
 	task.ID = id // Устанавливаем ID задачи перед обновлением
 	return s.repo.UpdateTaskByID(id, task)
 }
 
+// DeleteTask удаляет задачу по идентификатору.
 func (s *TaskService) DeleteTask(id uint) error {
 	return s.repo.DeleteTaskByID(id)
 }

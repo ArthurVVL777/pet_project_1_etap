@@ -34,7 +34,7 @@ func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (ta
 }
 
 // PostTasks обрабатывает запрос на создание новой задачи.
-func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
+func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	taskRequest := request.Body
 	if taskRequest == nil || taskRequest.Task == nil || taskRequest.IsDone == nil {
 		log.Printf("Request body or fields cannot be nil")
@@ -42,7 +42,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 	}
 
 	taskToCreate := taskService.Task{
-		Text:   *taskRequest.Task,
+		Task:   *taskRequest.Task,
 		IsDone: *taskRequest.IsDone,
 	}
 
@@ -54,7 +54,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 
 	response := tasks.PostTasks201JSONResponse{
 		Id:     &createdTask.ID,
-		Task:   &createdTask.Text,
+		Task:   &createdTask.Task,
 		IsDone: &createdTask.IsDone,
 	}
 

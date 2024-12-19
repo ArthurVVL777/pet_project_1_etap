@@ -21,13 +21,21 @@ paths:
       summary: Create a new task
       tags:
         - tasks
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: The ID of the task to create (optional)
+          schema:
+            type: integer
+            format: uint
       requestBody:
         description: The task to create
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Task'
+              $ref: '#/components/schemas/PostTaskRequestBody'
       responses:
         '201':
           description: The created task
@@ -54,19 +62,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  format: uint
-                  description: The unique identifier for the task.
-                task:
-                  type: string
-                  description: The new task description (optional)
-                is_done:
-                  type: boolean
-                  description: The completion status of the task (optional)
-              required: [] # Указываем, что ни одно из полей не является обязательным в теле запроса.
+              $ref: '#/components/schemas/PatchTaskRequestBody'
       responses:
         '200':
           description: The updated task
@@ -105,3 +101,33 @@ components:
         is_done:
           type: boolean
           description: Indicates whether the task is completed.
+        message:
+          type: string
+          description: Additional message related to the task.
+        text:
+          type: string
+          description: Additional text related to the task.
+
+    PostTaskRequestBody:
+      type: object
+      properties:
+        task:
+          type: string
+          description: The new task description (required).
+        is_done:
+          type: boolean
+          description: The completion status of the task (optional).
+
+    PatchTaskRequestBody:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+          description: The unique identifier for the task (optional).
+        task:
+          type: string
+          description: The new task description (optional).
+        is_done:
+          type: boolean
+          description: The completion status of the task (optional).

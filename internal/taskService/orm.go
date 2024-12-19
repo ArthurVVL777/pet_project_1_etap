@@ -8,30 +8,44 @@ type Message struct {
 
 // Task представляет задачу с её деталями.
 type Task struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
-	Task    string `json:"task"`
-	IsDone  bool   `json:"is_done"`
-	Message string `json:"message"`
-	Text    string `json:"text"`
+	ID      uint   `json:"id" gorm:"primaryKey"` // ID задачи, ключ в базе данных
+	Task    string `json:"task"`                 // Описание задачи
+	IsDone  bool   `json:"is_done"`              // Статус завершенности задачи
+	Message string `json:"message"`              // Дополнительное сообщение (если нужно)
+	Text    string `json:"text"`                 // Дополнительный текст (если нужно)
 }
 
 // Response представляет структуру ответа для API.
 type Response struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Status  string `json:"status"`  // Статус ответа
+	Message string `json:"message"` // Сообщение ответа
+}
+
+// PostTaskRequestBody определяет тело запроса для создания задачи.
+type PostTaskRequestBody struct {
+	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
+	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+}
+
+// PostTasksRequestObject определяет структуру запроса для создания задач.
+type PostTasksRequestObject struct {
+	Body *PostTaskRequestBody `json:"body"`
+	Id   *uint                `json:"id"` // Указатель на ID задачи (опционально)
 }
 
 // PatchTasksJSONRequestBody определяет тело запроса для PATCH задач.
 type PatchTasksJSONRequestBody struct {
-	Task   *string `json:"task"`
-	IsDone *bool   `json:"is_done"`
-	Id     *uint   `json:"id"` // Добавлено поле для ID задачи
+	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
+	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+	Id     *uint   `json:"id"`      // Указатель на ID задачи (опционально)
 }
 
+// PatchTasksRequestObject определяет структуру запроса для обновления задач.
 type PatchTasksRequestObject struct {
 	Body *PatchTaskRequestBody `json:"body"`
 }
 
+// PatchTaskRequestBody определяет тело запроса для частичного обновления задач.
 type PatchTaskRequestBody struct {
 	Id     *uint   `json:"id"`      // Указатель на ID задачи
 	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
