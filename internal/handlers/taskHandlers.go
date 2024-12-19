@@ -62,21 +62,22 @@ func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestO
 }
 
 // PatchTasksId обрабатывает запрос на обновление существующей задачи.
-// PatchTasksId обрабатывает запрос на обновление существующей задачи.
 func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
-	taskID := request.Body.Id // Предполагается, что Id — это *uint
+	taskID := request.Id // Извлекаем ID задачи из параметров запроса
 
-	if taskID == nil || *taskID == 0 {
+	// Проверяем, является ли taskID нулевым
+	if taskID == 0 {
 		log.Printf("Task ID must be greater than zero")
 		return nil, fmt.Errorf("task ID must be greater than zero")
 	}
 
-	existingTask, err := h.Service.GetTaskByID(*taskID)
+	existingTask, err := h.Service.GetTaskByID(taskID)
 	if err != nil {
-		log.Printf("Error fetching task with ID %d: %v", *taskID, err)
+		log.Printf("Error fetching task with ID %d: %v", taskID, err)
 		return nil, fmt.Errorf("task not found: %v", err)
 	}
 
+	// Обновляем поля задачи только если они не nil
 	if request.Body.Task != nil {
 		existingTask.Task = *request.Body.Task
 	}
@@ -84,9 +85,9 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 		existingTask.IsDone = *request.Body.IsDone
 	}
 
-	updatedTask, err := h.Service.UpdateTaskByID(*taskID, existingTask)
+	updatedTask, err := h.Service.UpdateTaskByID(taskID, existingTask)
 	if err != nil {
-		log.Printf("Error updating task with ID %d: %v", *taskID, err)
+		log.Printf("Error updating task with ID %d: %v", taskID, err)
 		return nil, fmt.Errorf("failed to update task: %w", err)
 	}
 

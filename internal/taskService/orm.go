@@ -38,14 +38,12 @@ type PatchTasksJSONRequestBody struct {
 	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
 }
 
-// PatchTasksRequestObject определяет структуру запроса для обновления задач.
-type PatchTasksRequestObject struct {
+type PatchTasksIdRequestObject struct {
+	Id   uint                  `json:"id"` // Указатель на ID задачи
 	Body *PatchTaskRequestBody `json:"body"`
 }
 
-// PatchTaskRequestBody определяет тело запроса для частичного обновления задач.
 type PatchTaskRequestBody struct {
-	Id     uint    `json:"id"`      // Указатель на ID задачи
 	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
 	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
 }

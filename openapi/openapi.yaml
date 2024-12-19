@@ -113,10 +113,6 @@ components:
     PatchTaskRequestBody:
       type: object
       properties:
-        id:
-          type: integer              # Добавлено поле ID для задачи.
-          format: uint               # Формат ID.
-          description: The unique identifier for the task (required).
         task:
           type: string
           description: The new task description (optional).

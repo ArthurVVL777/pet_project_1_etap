@@ -16,9 +16,6 @@ import (
 
 // PatchTaskRequestBody defines model for PatchTaskRequestBody.
 type PatchTaskRequestBody struct {
-	// Id The unique identifier for the task (required).
-	Id *uint `json:"id,omitempty"`
-
 	// IsDone The completion status of the task (optional).
 	IsDone *bool `json:"is_done,omitempty"`
 
