@@ -8,11 +8,11 @@ type Message struct {
 
 // Task представляет задачу с её деталями.
 type Task struct {
-	ID      uint   `json:"id" gorm:"primaryKey"` // ID задачи, ключ в базе данных
-	Task    string `json:"task"`                 // Описание задачи
-	IsDone  bool   `json:"is_done"`              // Статус завершенности задачи
-	Message string `json:"message"`              // Дополнительное сообщение (если нужно)
-	Text    string `json:"text"`                 // Дополнительный текст (если нужно)
+	ID      uint   `json:"id" gorm:"primaryKey"`
+	Task    string `json:"task"`
+	IsDone  bool   `json:"is_done"`
+	Message string `json:"message,omitempty"`
+	Text    string `json:"text,omitempty"`
 }
 
 // Response представляет структуру ответа для API.

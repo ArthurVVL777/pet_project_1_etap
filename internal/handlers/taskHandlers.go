@@ -62,7 +62,13 @@ func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestO
 }
 
 // PatchTasksId обрабатывает запрос на обновление существующей задачи.
+// PatchTasksId обрабатывает запрос на обновление существующей задачи.
 func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
+	if request.Body.Id == nil {
+		log.Printf("Task ID cannot be nil")
+		return nil, fmt.Errorf("task ID cannot be nil")
+	}
+
 	taskID := *request.Body.Id // Разыменовываем указатель на ID задачи
 	taskRequest := request.Body
 
@@ -78,7 +84,7 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 	}
 
 	if taskRequest.Task != nil {
-		existingTask.Text = *taskRequest.Task // Обновляем текст задачи только если он не nil
+		existingTask.Task = *taskRequest.Task // Обновляем текст задачи только если он не nil
 	}
 
 	if taskRequest.IsDone != nil {
@@ -88,12 +94,12 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 	updatedTask, err := h.Service.UpdateTaskByID(taskID, existingTask)
 	if err != nil {
 		log.Printf("Error updating task with ID %d: %v", taskID, err)
-		return nil, err
+		return nil, fmt.Errorf("failed to update task: %w", err)
 	}
 
 	response := tasks.PatchTasksId200JSONResponse{
 		Id:     &updatedTask.ID,
-		Task:   &updatedTask.Text,
+		Task:   &updatedTask.Task,
 		IsDone: &updatedTask.IsDone,
 	}
 
