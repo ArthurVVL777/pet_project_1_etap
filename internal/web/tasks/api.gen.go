@@ -16,7 +16,7 @@ import (
 
 // PatchTaskRequestBody defines model for PatchTaskRequestBody.
 type PatchTaskRequestBody struct {
-	// Id The unique identifier for the task (optional).
+	// Id The unique identifier for the task (required).
 	Id *uint `json:"id,omitempty"`
 
 	// IsDone The completion status of the task (optional).
@@ -53,12 +53,6 @@ type Task struct {
 	Text *string `json:"text,omitempty"`
 }
 
-// PostTasksParams defines parameters for PostTasks.
-type PostTasksParams struct {
-	// Id The ID of the task to create (optional)
-	Id uint `form:"id" json:"id"`
-}
-
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
 type PostTasksJSONRequestBody = PostTaskRequestBody
 
@@ -72,7 +66,7 @@ type ServerInterface interface {
 	GetTasks(ctx echo.Context) error
 	// Create a new task
 	// (POST /tasks)
-	PostTasks(ctx echo.Context, params PostTasksParams) error
+	PostTasks(ctx echo.Context) error
 	// Delete a task by ID
 	// (DELETE /tasks/{id})
 	DeleteTasksId(ctx echo.Context, id uint) error
@@ -99,17 +93,8 @@ func (w *ServerInterfaceWrapper) GetTasks(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PostTasks(ctx echo.Context) error {
 	var err error
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params PostTasksParams
-	// ------------- Required query parameter "id" -------------
-
-	err = runtime.BindQueryParameter("form", true, true, "id", ctx.QueryParams(), &params.Id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostTasks(ctx, params)
+	err = w.Handler.PostTasks(ctx)
 	return err
 }
 
@@ -197,8 +182,7 @@ func (response GetTasks200JSONResponse) VisitGetTasksResponse(w http.ResponseWri
 }
 
 type PostTasksRequestObject struct {
-	Params PostTasksParams
-	Body   *PostTasksJSONRequestBody
+	Body *PostTasksJSONRequestBody
 }
 
 type PostTasksResponseObject interface {
@@ -300,10 +284,8 @@ func (sh *strictHandler) GetTasks(ctx echo.Context) error {
 }
 
 // PostTasks operation middleware
-func (sh *strictHandler) PostTasks(ctx echo.Context, params PostTasksParams) error {
+func (sh *strictHandler) PostTasks(ctx echo.Context) error {
 	var request PostTasksRequestObject
-
-	request.Params = params
 
 	var body PostTasksJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {

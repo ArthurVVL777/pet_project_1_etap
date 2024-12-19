@@ -26,12 +26,14 @@ func (s *TaskService) GetTaskByID(id uint) (Task, error) {
 }
 
 // PatchTask частично обновляет задачу по идентификатору.
+// ID передается как параметр URL, а данные задачи в теле запроса.
 func (s *TaskService) PatchTask(id uint, task Task) (Task, error) {
 	// Здесь можно добавить валидацию или логику перед обновлением
 	return s.repo.PatchTaskByID(id, task)
 }
 
 // UpdateTaskByID обновляет задачу по идентификатору.
+// ID устанавливается перед обновлением задачи.
 func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
 	task.ID = id // Устанавливаем ID задачи перед обновлением
 	return s.repo.UpdateTaskByID(id, task)

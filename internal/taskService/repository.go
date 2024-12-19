@@ -1,73 +1,68 @@
 package taskService
 
 import (
-	"gorm.io/gorm" // Импортируем библиотеку GORM для работы с базой данных.
+	"gorm.io/gorm"
 )
 
 // TaskRepository определяет методы для работы с задачами в БД.
 type TaskRepository interface {
-	CreateTask(task Task) (Task, error)              // Метод для создания новой задачи.
-	GetAllTasks() ([]Task, error)                    // Метод для получения всех задач.
-	GetTaskByID(id uint) (Task, error)               // Метод для получения задачи по ID.
-	UpdateTaskByID(id uint, task Task) (Task, error) // Метод для обновления задачи по ID.
-	PatchTaskByID(id uint, task Task) (Task, error)  // Метод для частичного обновления задачи по ID.
-	DeleteTaskByID(id uint) error                    // Метод для удаления задачи по ID.
+	CreateTask(task Task) (Task, error)
+	GetAllTasks() ([]Task, error)
+	GetTaskByID(id uint) (Task, error)
+	UpdateTaskByID(id uint, task Task) (Task, error)
+	PatchTaskByID(id uint, task Task) (Task, error)
+	DeleteTaskByID(id uint) error
 }
 
 // Структура taskRepository реализует интерфейс TaskRepository.
 type taskRepository struct {
-	db *gorm.DB // Поле db хранит указатель на объект базы данных GORM.
+	db *gorm.DB
 }
 
 // NewTaskRepository создает новый экземпляр репозитория задач.
 func NewTaskRepository(db *gorm.DB) *taskRepository {
-	return &taskRepository{db: db} // Возвращает новый объект taskRepository с инициализированным полем db.
+	return &taskRepository{db: db}
 }
 
-// CreateTask создает новую задачу и сохраняет ее в БД.
+// Реализация методов интерфейса
 func (r *taskRepository) CreateTask(task Task) (Task, error) {
-	result := r.db.Create(&task) // Используем метод Create GORM для добавления задачи в БД.
-	if result.Error != nil {     // Проверяем, произошла ли ошибка при создании.
-		return Task{}, result.Error // Возвращаем пустую задачу и ошибку, если она есть.
+	result := r.db.Create(&task)
+	if result.Error != nil {
+		return Task{}, result.Error
 	}
-	return task, nil // Возвращаем созданную задачу и nil как ошибку.
+	return task, nil
 }
 
-// GetAllTasks возвращает все задачи из БД.
 func (r *taskRepository) GetAllTasks() ([]Task, error) {
-	var tasks []Task               // Объявляем переменную для хранения задач.
-	err := r.db.Find(&tasks).Error // Используем метод Find GORM для извлечения всех задач из БД.
-	return tasks, err              // Возвращаем массив задач и возможную ошибку.
+	var tasks []Task
+	err := r.db.Find(&tasks).Error
+	return tasks, err
 }
 
-// GetTaskByID возвращает задачу по идентификатору.
 func (r *taskRepository) GetTaskByID(id uint) (Task, error) {
 	var task Task
 	if err := r.db.First(&task, id).Error; err != nil {
-		return Task{}, err // Возвращаем ошибку, если задача не найдена
+		return Task{}, err
 	}
-	return task, nil // Возвращаем найденную задачу
+	return task, nil
 }
 
-// UpdateTaskByID обновляет задачу по идентификатору.
 func (r *taskRepository) UpdateTaskByID(id uint, task Task) (Task, error) {
 	var existingTask Task
 	if err := r.db.First(&existingTask, id).Error; err != nil {
-		return Task{}, err // Возвращаем ошибку если задача не найдена
+		return Task{}, err
 	}
 
-	// Обновляем поля задачи
 	existingTask.Task = task.Task
 	existingTask.IsDone = task.IsDone
 
 	if err := r.db.Save(&existingTask).Error; err != nil {
-		return Task{}, err // Возвращаем ошибку если не удалось сохранить изменения
+		return Task{}, err
 	}
 
-	return existingTask, nil // Возвращаем обновленную задачу
+	return existingTask, nil
 }
 
-// PatchTaskByID частично обновляет задачу по идентификатору.
 func (r *taskRepository) PatchTaskByID(id uint, task Task) (Task, error) {
 	var existingTask Task
 
@@ -78,20 +73,22 @@ func (r *taskRepository) PatchTaskByID(id uint, task Task) (Task, error) {
 	if task.Task != "" {
 		existingTask.Task = task.Task
 	}
-	if task.IsDone != existingTask.IsDone { // Обновляем только если значение изменилось
+
+	if task.IsDone != existingTask.IsDone {
 		existingTask.IsDone = task.IsDone
 	}
 
 	if err := r.db.Save(&existingTask).Error; err != nil {
 		return Task{}, err
 	}
+
 	return existingTask, nil
 }
 
-// DeleteTaskByID удаляет задачу по идентификатору.
 func (r *taskRepository) DeleteTaskByID(id uint) error {
 	if err := r.db.Delete(&Task{}, id).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
