@@ -27,3 +27,13 @@ type PatchTasksJSONRequestBody struct {
 	IsDone *bool   `json:"is_done"`
 	Id     *uint   `json:"id"` // Добавлено поле для ID задачи
 }
+
+type PatchTasksRequestObject struct {
+	Body *PatchTaskRequestBody `json:"body"`
+}
+
+type PatchTaskRequestBody struct {
+	Id     *uint   `json:"id"`      // Указатель на ID задачи
+	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
+	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+}

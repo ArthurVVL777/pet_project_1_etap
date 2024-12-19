@@ -16,14 +16,19 @@ func (s *TaskService) GetAllTasks() ([]Task, error) {
 	return s.repo.GetAllTasks()
 }
 
-func (s *TaskService) GetTaskByID(id uint) (Task, error) { return s.repo.GetTaskByID(id) }
+func (s *TaskService) GetTaskByID(id uint) (Task, error) {
+	return s.repo.GetTaskByID(id)
+}
 
+// Изменяем метод PatchTask для поддержки обновления по ID
 func (s *TaskService) PatchTask(id uint, task Task) (Task, error) {
 	return s.repo.PatchTaskByID(id, task)
 }
 
-func (s *TaskService) UpdateTaskByID(task Task) (Task, error) {
-	return s.repo.UpdateTaskByID(task.ID, task)
+// Обновляем метод UpdateTaskByID для поддержки передачи ID
+func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
+	task.ID = id // Устанавливаем ID задачи перед обновлением
+	return s.repo.UpdateTaskByID(id, task)
 }
 
 func (s *TaskService) DeleteTask(id uint) error {

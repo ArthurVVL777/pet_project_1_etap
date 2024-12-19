@@ -12,13 +12,15 @@ type Handler struct {
 	Service *taskService.TaskService
 }
 
+// GetTasks обрабатывает запрос на получение всех задач.
 func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
 	allTasks, err := h.Service.GetAllTasks()
 	if err != nil {
+		log.Printf("Error fetching tasks: %v", err)
 		return nil, err
 	}
 
-	response := tasks.GetTasks200JSONResponse{}
+	response := make(tasks.GetTasks200JSONResponse, 0, len(allTasks))
 	for _, tsk := range allTasks {
 		task := tasks.Task{
 			Id:     &tsk.ID,
@@ -31,9 +33,11 @@ func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (ta
 	return response, nil
 }
 
+// PostTasks обрабатывает запрос на создание новой задачи.
 func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	taskRequest := request.Body
 	if taskRequest == nil || taskRequest.Task == nil || taskRequest.IsDone == nil {
+		log.Printf("Request body or fields cannot be nil")
 		return nil, fmt.Errorf("request body or fields cannot be nil")
 	}
 
@@ -44,6 +48,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)
 	if err != nil {
+		log.Printf("Error creating task: %v", err)
 		return nil, err
 	}
 
@@ -56,56 +61,59 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 	return response, nil
 }
 
-func (h *Handler) PatchTasks(ctx context.Context, request tasks.PatchTasksRequestObject) (tasks.PatchTasksResponseObject, error) {
+// PatchTasksId обрабатывает запрос на обновление существующей задачи.
+func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
 	taskID := *request.Body.Id // Разыменовываем указатель на ID задачи
 	taskRequest := request.Body
 
 	if taskRequest == nil {
+		log.Printf("Request body cannot be nil")
 		return nil, fmt.Errorf("request body cannot be nil")
 	}
 
-	// Получаем существующую задачу из базы данных
 	existingTask, err := h.Service.GetTaskByID(taskID)
 	if err != nil {
+		log.Printf("Error fetching task with ID %d: %v", taskID, err)
 		return nil, fmt.Errorf("task not found: %v", err)
 	}
 
-	// Обновляем только те поля, которые были переданы в запросе
 	if taskRequest.Task != nil {
-		existingTask.Task = *taskRequest.Task // Обновляем текст задачи только если он не nil
+		existingTask.Text = *taskRequest.Task // Обновляем текст задачи только если он не nil
 	}
 
 	if taskRequest.IsDone != nil {
 		existingTask.IsDone = *taskRequest.IsDone // Обновляем статус завершенности только если он не nil
 	}
 
-	// Сохраняем обновленную задачу в базе данных
-	updatedTask, err := h.Service.UpdateTaskByID(existingTask)
+	updatedTask, err := h.Service.UpdateTaskByID(taskID, existingTask)
 	if err != nil {
 		log.Printf("Error updating task with ID %d: %v", taskID, err)
 		return nil, err
 	}
 
-	response := tasks.PatchTasks200JSONResponse{
+	response := tasks.PatchTasksId200JSONResponse{
 		Id:     &updatedTask.ID,
-		Task:   &updatedTask.Task,
+		Task:   &updatedTask.Text,
 		IsDone: &updatedTask.IsDone,
 	}
 
 	return response, nil
 }
 
+// DeleteTasksId обрабатывает запрос на удаление задачи по ID.
 func (h *Handler) DeleteTasksId(ctx context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
 	taskID := request.Id // Извлекаем ID задачи из параметров запроса
 
 	err := h.Service.DeleteTask(taskID)
 	if err != nil {
-		return nil, err // Возвращаем ошибку, если удаление не удалось
+		log.Printf("Error deleting task with ID %d: %v", taskID, err)
+		return nil, err // Возвращаем ошибку если удаление не удалось
 	}
 
 	return tasks.DeleteTasksId204Response{}, nil // Возвращаем успешный ответ без тела
 }
 
+// NewHandler создает новый экземпляр Handler с заданным сервисом.
 func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{
 		Service: service,

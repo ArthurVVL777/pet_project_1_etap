@@ -35,12 +35,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+  /tasks/{id}:
     patch:
       summary: Update an existing task
       tags:
         - tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the task to update (required)
+          schema:
+            type: integer
+            format: uint
       requestBody:
-        description: The task data to update
+        description: The task data to update (ID is provided in the URL)
         required: true
         content:
           application/json:
@@ -50,15 +59,14 @@ paths:
                 id:
                   type: integer
                   format: uint
-                  description: The ID of the task to update (required)
+                  description: The unique identifier for the task.
                 task:
                   type: string
                   description: The new task description (optional)
                 is_done:
                   type: boolean
                   description: The completion status of the task (optional)
-              required:
-                - id  # Обязательно указывать ID задачи для обновления.
+              required: [] # Указываем, что ни одно из полей не является обязательным в теле запроса.
       responses:
         '200':
           description: The updated task
@@ -66,7 +74,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
-  /tasks/{id}:
     delete:
       summary: Delete a task by ID
       tags:
