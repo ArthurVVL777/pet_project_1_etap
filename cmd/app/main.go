@@ -14,10 +14,8 @@ func main() {
 	// Инициализация базы данных
 	database.InitDB()
 
-	// Добавляем обработку ошибок при миграции
-	if err := database.DB.AutoMigrate(&taskService.Task{}); err != nil {
-		log.Fatalf("AutoMigrate failed: %v", err)
-	}
+	// Выполнение миграций
+	database.Migrate()
 
 	repo := taskService.NewTaskRepository(database.DB)
 	service := taskService.NewService(repo)
