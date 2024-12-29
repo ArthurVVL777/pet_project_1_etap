@@ -1,7 +1,5 @@
 package taskService
 
-import "time"
-
 // Message представляет простую структуру сообщения.
 type Message struct {
 	ID   int    `json:"id"`
@@ -48,13 +46,4 @@ type PatchTasksIdRequestObject struct {
 type PatchTaskRequestBody struct {
 	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
 	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
-}
-
-type User struct {
-	ID        uint       `json:"id" gorm:"primaryKey"`
-	Email     string     `json:"email" gorm:"unique;not null"`
-	Password  string     `json:"password" gorm:"not null"`
-	DeletedAt *time.Time `json:"deletedAt" gorm:"index"`
-	CreatedAt time.Time  `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt time.Time  `json:"updatedAt" gorm:"autoUpdateTime"`
 }

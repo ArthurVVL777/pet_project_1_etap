@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"pet_project_1_etap/internal/taskService"
+	"pet_project_1_etap/internal/userService"
 )
 
 var DB *gorm.DB
@@ -22,7 +22,7 @@ func InitDB() {
 	}
 }
 func Migrate() {
-	if err := DB.AutoMigrate(&taskService.User{}); err != nil {
+	if err := DB.AutoMigrate(&userService.User{}); err != nil {
 		log.Fatalf("Automigrate failed: %v", err)
 	}
 }

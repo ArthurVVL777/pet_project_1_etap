@@ -7,29 +7,33 @@ import (
 	"pet_project_1_etap/internal/database"
 	"pet_project_1_etap/internal/handlers"
 	"pet_project_1_etap/internal/taskService"
+	"pet_project_1_etap/internal/userService"
 	"pet_project_1_etap/internal/web/tasks"
+	"pet_project_1_etap/internal/web/users"
 )
 
 func main() {
-	// Инициализация базы данных
 	database.InitDB()
-
-	// Выполнение миграций
 	database.Migrate()
 
-	repo := taskService.NewTaskRepository(database.DB)
-	service := taskService.NewService(repo)
-	handler := handlers.NewHandler(service)
+	// Обновление названий репозиториев и сервисов задач
+	tasksRepo := taskService.NewTaskRepository(database.DB)
+	tasksSvc := taskService.NewService(tasksRepo)
+	tasksHandler := handlers.NewHandler(tasksSvc)
+
+	// Добавление репозитория и сервиса пользователей
+	userRepo := userService.NewUserRepository(database.DB)
+	userSvc := userService.NewService(userRepo)
+	userHandler := handlers.NewUserHandler(userSvc)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Регистрация обработчиков с учетом строгой сигнатуры
-	strictHandler := tasks.NewStrictHandler(handler, nil)
-	tasks.RegisterHandlers(e, strictHandler)
+	// Регистрация обработчиков задач и пользователей
+	tasks.RegisterHandlers(e, tasksHandler)
+	users.RegisterHandlers(e, userHandler)
 
-	// Запуск сервера на порту 8080
 	if err := e.Start(":8080"); err != nil {
 		log.Fatalf("failed to start with err: %v", err)
 	}

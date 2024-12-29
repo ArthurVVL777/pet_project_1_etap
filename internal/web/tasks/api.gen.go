@@ -16,38 +16,21 @@ import (
 
 // PatchTaskRequestBody defines model for PatchTaskRequestBody.
 type PatchTaskRequestBody struct {
-	// IsDone The completion status of the task (optional).
-	IsDone *bool `json:"is_done,omitempty"`
-
-	// Task The new task description (optional).
-	Task *string `json:"task,omitempty"`
+	IsDone *bool   `json:"is_done,omitempty"`
+	Task   *string `json:"task,omitempty"`
 }
 
 // PostTaskRequestBody defines model for PostTaskRequestBody.
 type PostTaskRequestBody struct {
-	// IsDone The completion status of the task (optional).
-	IsDone *bool `json:"is_done,omitempty"`
-
-	// Task The new task description (required).
-	Task *string `json:"task,omitempty"`
+	IsDone *bool   `json:"is_done,omitempty"`
+	Task   *string `json:"task,omitempty"`
 }
 
 // Task defines model for Task.
 type Task struct {
-	// Id The unique identifier for the task.
-	Id *uint `json:"id,omitempty"`
-
-	// IsDone Indicates whether the task is completed.
-	IsDone *bool `json:"is_done,omitempty"`
-
-	// Message Additional message related to the task.
-	Message *string `json:"message,omitempty"`
-
-	// Task The description of the task.
-	Task *string `json:"task,omitempty"`
-
-	// Text Additional text related to the task.
-	Text *string `json:"text,omitempty"`
+	Id     *uint   `json:"id,omitempty"`
+	IsDone *bool   `json:"is_done,omitempty"`
+	Task   *string `json:"task,omitempty"`
 }
 
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
