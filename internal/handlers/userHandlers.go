@@ -14,12 +14,10 @@ func NewUserHandler(service *userService.UserService) *UserHandler {
 	return &UserHandler{Service: service}
 }
 
-// GetUsers обрабатывает запрос на получение всех пользователей.
 func (h *UserHandler) GetUsers(ctx context.Context) ([]userService.User, error) {
 	return h.Service.GetAllUsers()
 }
 
-// PostUser обрабатывает запрос на создание нового пользователя.
 func (h *UserHandler) PostUser(ctx context.Context, user userService.User) (userService.User, error) {
 	return h.Service.CreateUser(user)
 }

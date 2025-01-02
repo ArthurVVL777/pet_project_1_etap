@@ -1,7 +1,9 @@
 package userService
 
 import (
+	"context"
 	"gorm.io/gorm"
+	"pet_project_1_etap/internal/web/users"
 )
 
 // UserRepository определяет методы для работы с пользователями в БД.
@@ -59,4 +61,12 @@ func (r *userRepository) UpdateUserByID(id uint, user User) (User, error) {
 
 func (r *userRepository) DeleteUserByID(id uint) error {
 	return r.db.Delete(&User{}, id).Error
+}
+
+// ServerInterface определяет методы для работы с пользователями.
+type ServerInterface interface {
+	GetUsers(ctx context.Context) ([]users.User, error)
+	PostUser(ctx context.Context, user users.User) (users.User, error)
+	PatchUserByID(ctx context.Context, id uint, user users.User) (users.User, error)
+	DeleteUserByID(ctx context.Context, id uint) error
 }
