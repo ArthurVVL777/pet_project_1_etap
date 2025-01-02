@@ -1,8 +1,10 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"pet_project_1_etap/internal/taskService"
 	"pet_project_1_etap/internal/web/tasks"
@@ -18,11 +20,11 @@ func NewHandler(service *taskService.TaskService) *Handler {
 }
 
 // GetTasks обрабатывает запрос на получение всех задач.
-func (h *Handler) GetTasks(ctx context.Context, req tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
+func (h *Handler) GetTasks(ctx echo.Context) error {
 	allTasks, err := h.Service.GetAllTasks()
 	if err != nil {
 		log.Printf("Error fetching tasks: %v", err)
-		return nil, err
+		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
 	}
 
 	response := make(tasks.GetTasks200JSONResponse, 0, len(allTasks))
@@ -34,26 +36,26 @@ func (h *Handler) GetTasks(ctx context.Context, req tasks.GetTasksRequestObject)
 		}
 		response = append(response, task)
 	}
-	return response, nil
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // PostTasks обрабатывает запрос на создание новой задачи.
-func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
-	taskRequest := request.Body
-	if taskRequest == nil || taskRequest.Task == nil || taskRequest.IsDone == nil {
-		log.Printf("Request body or fields cannot be nil")
-		return nil, fmt.Errorf("request body or fields cannot be nil")
+func (h *Handler) PostTasks(ctx echo.Context) error {
+	var request tasks.PostTasksRequestObject
+	if err := ctx.Bind(&request); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
 	taskToCreate := taskService.Task{
-		Task:   *taskRequest.Task,
-		IsDone: *taskRequest.IsDone,
+		Task:   *request.Body.Task,
+		IsDone: *request.Body.IsDone,
 	}
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)
 	if err != nil {
 		log.Printf("Error creating task: %v", err)
-		return nil, err
+		return ctx.JSON(http.StatusInternalServerError, "Error creating task")
 	}
 
 	response := tasks.PostTasks201JSONResponse{
@@ -62,24 +64,22 @@ func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestO
 		IsDone: &createdTask.IsDone,
 	}
 
-	return response, nil
+	return ctx.JSON(http.StatusCreated, response)
 }
 
 // PatchTasksId обрабатывает запрос на обновление существующей задачи.
-func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
-	taskID := request.Id
-	if taskID == 0 {
-		log.Printf("Task ID must be greater than zero")
-		return nil, fmt.Errorf("task ID must be greater than zero")
+func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error { // Обновлено
+	var request tasks.PatchTasksIdRequestObject
+	if err := ctx.Bind(&request); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	existingTask, err := h.Service.GetTaskByID(taskID)
+	existingTask, err := h.Service.GetTaskByID(id)
 	if err != nil {
-		log.Printf("Error fetching task with ID %d: %v", taskID, err)
-		return nil, fmt.Errorf("task not found: %v", err)
+		log.Printf("Error fetching task with ID %d: %v", id, err)
+		return ctx.JSON(http.StatusNotFound, fmt.Sprintf("task not found: %v", err))
 	}
 
-	// Обновляем поля задачи только если они не nil
 	if request.Body.Task != nil {
 		existingTask.Task = *request.Body.Task
 	}
@@ -88,10 +88,10 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 		existingTask.IsDone = *request.Body.IsDone
 	}
 
-	updatedTask, err := h.Service.UpdateTaskByID(taskID, existingTask)
+	updatedTask, err := h.Service.UpdateTaskByID(id, existingTask)
 	if err != nil {
-		log.Printf("Error updating task with ID %d: %v", taskID, err)
-		return nil, fmt.Errorf("failed to update task: %w", err)
+		log.Printf("Error updating task with ID %d: %v", id, err)
+		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("failed to update task: %v", err))
 	}
 
 	response := tasks.PatchTasksId200JSONResponse{
@@ -100,18 +100,16 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 		IsDone: &updatedTask.IsDone,
 	}
 
-	return response, nil
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // DeleteTasksId обрабатывает запрос на удаление задачи по ID.
-func (h *Handler) DeleteTasksId(ctx context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
-	taskID := request.Id
-	err := h.Service.DeleteTask(taskID)
-
+func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error { // Обновлено
+	err := h.Service.DeleteTask(id)
 	if err != nil {
-		log.Printf("Error deleting task with ID %d: %v", taskID, err)
-		return nil, err // Возвращаем ошибку если удаление не удалось
+		log.Printf("Error deleting task with ID %d: %v", id, err)
+		return ctx.JSON(http.StatusInternalServerError, "Error deleting task")
 	}
 
-	return tasks.DeleteTasksId204Response{}, nil // Возвращаем успешный ответ без тела
+	return ctx.NoContent(http.StatusNoContent) // Возвращаем успешный ответ без тела
 }

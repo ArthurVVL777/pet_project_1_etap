@@ -1,9 +1,8 @@
 package taskService
 
 import (
-	"context"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
-	"pet_project_1_etap/internal/web/tasks"
 )
 
 // TaskRepository определяет методы для работы с задачами в БД.
@@ -96,9 +95,8 @@ func (r *taskRepository) DeleteTaskByID(id uint) error {
 }
 
 type ServerInterface interface {
-	// Методы для работы с задачами
-	GetTasks(ctx context.Context, req tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error)
-	PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error)
-	PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error)
-	DeleteTasksId(ctx context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error)
+	GetTasks(ctx echo.Context) error
+	PostTasks(ctx echo.Context) error
+	PatchTasksId(ctx echo.Context, id uint) error  // Обновлено
+	DeleteTasksId(ctx echo.Context, id uint) error // Обновлено
 }
