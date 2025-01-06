@@ -17,11 +17,11 @@ func NewUserHandler(service *userService.UserService) *UserHandler {
 
 // GetUsers обрабатывает запрос на получение всех пользователей.
 func (u *UserHandler) GetUsers(ctx echo.Context) error {
-	users, err := u.Service.GetAllUsers()
+	user, err := u.Service.GetAllUsers()
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
-	return ctx.JSON(http.StatusOK, users)
+	return ctx.JSON(http.StatusOK, user)
 }
 
 // PostUsers обрабатывает запрос на создание нового пользователя.

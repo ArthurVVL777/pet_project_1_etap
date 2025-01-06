@@ -34,3 +34,8 @@ func (s *UserService) UpdateUserByID(id uint, user User) (User, error) {
 func (s *UserService) DeleteUserByID(id uint) error {
 	return s.repo.DeleteUserByID(id)
 }
+
+// PatchUser частично обновляет пользователя по идентификатору через репозиторий.
+func (s *UserService) PatchUser(id uint, user User) (User, error) {
+	return s.repo.PatchUserByID(id, user)
+}
