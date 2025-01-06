@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"log"
 	"net/http"
 	"pet_project_1_etap/internal/userService"
+	"pet_project_1_etap/internal/web/users"
 )
 
 type UserHandler struct {
@@ -39,23 +42,44 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, createdUser)
 }
 
-// PatchUserByID обрабатывает запрос на обновление существующего пользователя.
-func (u *UserHandler) PatchUserByID(ctx echo.Context, id uint) error {
-	var user userService.User
-	if err := ctx.Bind(&user); err != nil {
-		return ctx.JSON(http.StatusBadRequest, err)
+func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
+	var request users.PatchUserIdRequestObject
+	if err := ctx.Bind(&request); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	updatedUser, err := u.Service.UpdateUserByID(id, user)
+	existingUser, err := u.Service.GetUserByID(id) // Используем id напрямую
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err)
+		log.Printf("Error fetching user with ID %d: %v", id, err)
+		return ctx.JSON(http.StatusNotFound, fmt.Sprintf("user not found: %v", err))
 	}
 
-	return ctx.JSON(http.StatusOK, updatedUser)
+	// Обновляем только те поля, которые были переданы
+	if request.Body.Email != nil {
+		existingUser.Email = *request.Body.Email
+	}
+
+	if request.Body.Password != nil {
+		existingUser.Password = *request.Body.Password
+	}
+
+	updatedUser, err := u.Service.UpdateUserByID(id, existingUser)
+	if err != nil {
+		log.Printf("Error updating user with ID %d: %v", id, err)
+		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("failed to update user: %v", err))
+	}
+
+	response := users.User{
+		Id:       &updatedUser.ID,
+		Email:    &updatedUser.Email,
+		Password: &updatedUser.Password,
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // DeleteUserByID обрабатывает запрос на удаление пользователя по ID.
-func (u *UserHandler) DeleteUserByID(ctx echo.Context, id uint) error {
+func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {
 	if err := u.Service.DeleteUserByID(id); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}

@@ -103,7 +103,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/PostUserRequestObject'
       responses:
         '201':
           description: The created user
@@ -112,42 +112,118 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
 
+  /users/{id}:
+    patch:
+      summary: Update an existing user by ID
+      tags:
+        - users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to update (required)
+          schema:
+            type: integer
+            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+      requestBody:
+        description: The user data to update (ID is provided in the URL)
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchUserIdRequestObject'
+      responses:
+        '200':
+          description: The updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete a user by ID
+      tags:
+        - users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to delete.
+          schema:
+            type: integer
+            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+      responses:
+        '204':
+          description: User deleted successfully
+
 components:
+
   schemas:
+
     Task:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: uint  # Используйте uint или int64 в зависимости от ваших требований.
-        task:
-          type: string
-        is_done:
-          type: boolean
+
+      type : object
+      properties :
+        id :
+          type : integer
+          format : uint
+        task :
+          type : string
+        is_done :
+          type : boolean
 
     PostTaskRequestBody:
-      type: object
-      properties:
-        task:
-          type: string
-        is_done:
-          type: boolean
+
+      type : object
+      properties :
+        task :
+          type : string
+        is_done :
+          type : boolean
 
     PatchTaskRequestBody:
-      type: object
-      properties:
-        task:
-          type: string
-        is_done:
-          type: boolean
 
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: uint  # Используйте uint или int64 в зависимости от ваших требований.
-        email:
-          type: string
-        password:
-          type: string
+      type : object
+      properties :
+        task :
+          type : string
+        is_done :
+          type : boolean
+
+    User :
+
+      type : object
+      properties :
+        id :
+          type : integer
+          format : uint
+        email :
+          type : string
+        password :
+          type : string
+
+    PostUserRequestObject :
+
+      type : object
+      properties :
+        body :
+          type : object
+          properties :
+            email :
+              type : string
+            password :
+              type : string
+
+    PatchUserIdRequestObject :
+
+      type : object
+      properties :
+        id :
+          type : integer
+        body :
+          type : object
+          properties :
+            email :
+              type : string
+            password :
+              type : string
+

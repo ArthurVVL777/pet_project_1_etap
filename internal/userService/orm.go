@@ -43,6 +43,6 @@ type PatchUserIdRequestObject struct {
 }
 
 type PatchUserRequestBody struct {
-	Email    *string `json:"email"`    // Указатель на email (опционально)
-	Password *string `json:"password"` // Указатель на пароль (опционально)
+	Email    *string `json:"email,omitempty"`
+	Password *string `json:"password,omitempty"`
 }
