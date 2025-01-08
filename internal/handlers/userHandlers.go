@@ -18,12 +18,24 @@ func NewUserHandler(service *userService.UserService) *UserHandler {
 	return &UserHandler{Service: service}
 }
 
-func (u *UserHandler) GetUsers(ctx echo.Context) error {
-	user, err := u.Service.GetAllUsers()
+func (h *UserHandler) GetUsers(ctx echo.Context) error {
+	allUsers, err := h.Service.GetAllUsers()
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err)
+		log.Printf("Error fetching users: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, "Error fetching users")
 	}
-	return ctx.JSON(http.StatusOK, user)
+
+	response := make([]users.User, 0, len(allUsers))
+	for _, usr := range allUsers {
+		user := users.User{
+			Id:       &usr.ID,
+			Email:    &usr.Email,
+			Password: &usr.Password, // Обратите внимание на безопасность
+		}
+		response = append(response, user)
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (u *UserHandler) PostUsers(ctx echo.Context) error {
