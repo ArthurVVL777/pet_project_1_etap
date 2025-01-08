@@ -37,7 +37,13 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 
-	return ctx.JSON(http.StatusCreated, createdUser)
+	response := users.User{
+		Id:       &createdUser.ID,
+		Email:    &createdUser.Email,
+		Password: &createdUser.Password,
+	}
+
+	return ctx.JSON(http.StatusCreated, response)
 }
 
 func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
