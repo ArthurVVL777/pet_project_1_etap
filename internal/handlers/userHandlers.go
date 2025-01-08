@@ -18,7 +18,6 @@ func NewUserHandler(service *userService.UserService) *UserHandler {
 	return &UserHandler{Service: service}
 }
 
-// GetUsers обрабатывает запрос на получение всех пользователей.
 func (u *UserHandler) GetUsers(ctx echo.Context) error {
 	user, err := u.Service.GetAllUsers()
 	if err != nil {
@@ -27,7 +26,6 @@ func (u *UserHandler) GetUsers(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, user)
 }
 
-// PostUsers обрабатывает запрос на создание нового пользователя.
 func (u *UserHandler) PostUsers(ctx echo.Context) error {
 	var user userService.User
 	if err := ctx.Bind(&user); err != nil {
@@ -78,7 +76,6 @@ func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// DeleteUserByID обрабатывает запрос на удаление пользователя по ID.
 func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {
 	if err := u.Service.DeleteUserByID(id); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)

@@ -48,7 +48,7 @@ paths:
           description: The ID of the task to update (required)
           schema:
             type: integer
-            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+            format: uint
       requestBody:
         description: The task data to update (ID is provided in the URL)
         required: true
@@ -74,7 +74,7 @@ paths:
           description: The ID of the task to delete.
           schema:
             type: integer
-            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+            format: uint
       responses:
         '204':
           description: Task deleted successfully
@@ -124,7 +124,7 @@ paths:
           description: The ID of the user to update (required)
           schema:
             type: integer
-            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+            format: uint
       requestBody:
         description: The user data to update (ID is provided in the URL)
         required: true
@@ -150,7 +150,7 @@ paths:
           description: The ID of the user to delete.
           schema:
             type: integer
-            format: uint  # Используйте uint или int64 в зависимости от ваших требований.
+            format: uint
       responses:
         '204':
           description: User deleted successfully

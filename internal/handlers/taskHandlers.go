@@ -19,7 +19,6 @@ func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{Service: service}
 }
 
-// GetTasks обрабатывает запрос на получение всех задач.
 func (h *Handler) GetTasks(ctx echo.Context) error {
 	allTasks, err := h.Service.GetAllTasks()
 	if err != nil {
@@ -40,7 +39,6 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// PostTasks обрабатывает запрос на создание новой задачи.
 func (h *Handler) PostTasks(ctx echo.Context) error {
 	var request tasks.PostTasksRequestObject
 	if err := ctx.Bind(&request); err != nil {
@@ -67,7 +65,6 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, response)
 }
 
-// PatchTasksId обрабатывает запрос на обновление существующей задачи.
 func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error { // Обновлено
 	var request tasks.PatchTasksIdRequestObject
 	if err := ctx.Bind(&request); err != nil {
@@ -103,7 +100,6 @@ func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error { // Обнов�
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// DeleteTasksId обрабатывает запрос на удаление задачи по ID.
 func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error { // Обновлено
 	err := h.Service.DeleteTask(id)
 	if err != nil {

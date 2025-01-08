@@ -25,7 +25,6 @@ func NewTaskRepository(db *gorm.DB) *taskRepository {
 	return &taskRepository{db: db}
 }
 
-// Реализация методов интерфейса
 func (r *taskRepository) CreateTask(task Task) (Task, error) {
 	result := r.db.Create(&task)
 	if result.Error != nil {
