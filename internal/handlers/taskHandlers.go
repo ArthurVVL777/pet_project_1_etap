@@ -65,7 +65,7 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, response)
 }
 
-func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error { // Обновлено
+func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
 	var request tasks.PatchTasksIdRequestObject
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
@@ -100,7 +100,7 @@ func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error { // Обнов�
 	return ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error { // Обновлено
+func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {
 	err := h.Service.DeleteTask(id)
 	if err != nil {
 		log.Printf("Error deleting task with ID %d: %v", id, err)
