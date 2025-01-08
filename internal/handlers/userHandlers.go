@@ -30,7 +30,7 @@ func (h *UserHandler) GetUsers(ctx echo.Context) error {
 		user := users.User{
 			Id:       &usr.ID,
 			Email:    &usr.Email,
-			Password: &usr.Password, // Обратите внимание на безопасность
+			Password: &usr.Password,
 		}
 		response = append(response, user)
 	}
