@@ -11,8 +11,8 @@ type UserRepository interface {
 	GetAllUsers() ([]User, error)
 	GetUserByID(id uint) (User, error)
 	UpdateUserByID(id uint, user User) (User, error)
-	DeleteUserByID(id uint) error
 	PatchUserByID(id uint, user User) (User, error) // Метод для частичного обновления
+	DeleteUserByID(id uint) error
 }
 
 // userRepository реализует интерфейс UserRepository.
@@ -58,10 +58,6 @@ func (r *userRepository) UpdateUserByID(id uint, user User) (User, error) {
 	return existingUser, nil
 }
 
-func (r *userRepository) DeleteUserByID(id uint) error {
-	return r.db.Delete(&User{}, id).Error
-}
-
 // PatchUserByID частично обновляет пользователя по идентификатору.
 func (r *userRepository) PatchUserByID(id uint, user User) (User, error) {
 	var existingUser User
@@ -83,6 +79,10 @@ func (r *userRepository) PatchUserByID(id uint, user User) (User, error) {
 	}
 
 	return existingUser, nil
+}
+
+func (r *userRepository) DeleteUserByID(id uint) error {
+	return r.db.Delete(&User{}, id).Error
 }
 
 // ServerInterface определяет методы для работы с пользователями.

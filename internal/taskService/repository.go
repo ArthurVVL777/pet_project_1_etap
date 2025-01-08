@@ -21,7 +21,7 @@ type taskRepository struct {
 }
 
 // NewTaskRepository создает новый экземпляр репозитория задач.
-func NewTaskRepository(db *gorm.DB) *taskRepository {
+func NewTaskRepository(db *gorm.DB) TaskRepository {
 	return &taskRepository{db: db}
 }
 
@@ -96,6 +96,6 @@ func (r *taskRepository) DeleteTaskByID(id uint) error {
 type ServerInterface interface {
 	GetTasks(ctx echo.Context) error
 	PostTasks(ctx echo.Context) error
-	PatchTasksId(ctx echo.Context, id uint) error  // Обновлено
-	DeleteTasksId(ctx echo.Context, id uint) error // Обновлено
+	PatchTasksId(ctx echo.Context, id uint) error
+	DeleteTasksId(ctx echo.Context, id uint) error
 }
