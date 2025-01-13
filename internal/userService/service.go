@@ -1,5 +1,7 @@
 package userService
 
+import "pet_project_1_etap/internal/taskService"
+
 // UserService представляет сервис для работы с пользователями.
 type UserService struct {
 	repo UserRepository // Репозиторий для работы с пользователями в БД.
@@ -38,4 +40,8 @@ func (s *UserService) PatchUser(id uint, user User) (User, error) {
 // DeleteUserByID удаляет пользователя по идентификатору через репозиторий.
 func (s *UserService) DeleteUserByID(id uint) error {
 	return s.repo.DeleteUserByID(id)
+}
+
+func (s *UserService) GetTasksForUser(userID uint) ([]taskService.Task, error) {
+	return s.repo.GetTasksForUser(userID)
 }

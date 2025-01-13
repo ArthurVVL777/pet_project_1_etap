@@ -3,6 +3,7 @@ package userService
 import (
 	"context"
 	"gorm.io/gorm"
+	"pet_project_1_etap/internal/taskService"
 	"pet_project_1_etap/internal/web/users"
 )
 
@@ -13,11 +14,17 @@ type UserRepository interface {
 	UpdateUserByID(id uint, user User) (User, error)
 	PatchUserByID(id uint, user User) (User, error) // Метод для частичного обновления
 	DeleteUserByID(id uint) error
+	GetTasksForUser(id uint) ([]taskService.Task, error)
 }
 
 // userRepository реализует интерфейс UserRepository.
 type userRepository struct {
 	db *gorm.DB
+}
+
+func (r *userRepository) GetTasksForUser(id uint) ([]taskService.Task, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 // NewUserRepository создает новый экземпляр репозитория пользователей.

@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -39,6 +40,7 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
+// Обновите PostTasks для поддержки user_id
 func (h *Handler) PostTasks(ctx echo.Context) error {
 	var request tasks.PostTasksRequestObject
 	if err := ctx.Bind(&request); err != nil {
@@ -48,7 +50,7 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 	taskToCreate := taskService.Task{
 		Task:   *request.Body.Task,
 		IsDone: *request.Body.IsDone,
-		UserID: *request.Body.UserID, // Убедитесь, что это поле присутствует в запросе
+		UserID: *request.Body.UserID, // Указываем user_id
 	}
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)
@@ -109,4 +111,21 @@ func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {
 	}
 
 	return ctx.NoContent(http.StatusNoContent) // Возвращаем успешный ответ без тела
+}
+
+func (h *UserHandler) GetTasksForUser(ctx echo.Context) error {
+	userID := ctx.Param("user_id") // Получаем user_id из URL
+
+	// Преобразуем строку в uint (не забудьте обработать ошибку преобразования)
+	id, err := strconv.ParseUint(userID, 10, 32)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")
+	}
+
+	tasks, err := h.Service.GetTasksForUser(uint(id))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
+	}
+
+	return ctx.JSON(http.StatusOK, tasks)
 }

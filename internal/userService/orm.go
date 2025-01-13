@@ -13,8 +13,7 @@ type User struct {
 	CreatedAt time.Time          `json:"createdAt" gorm:"autoCreateTime"`
 	UpdatedAt time.Time          `json:"updatedAt" gorm:"autoUpdateTime"`
 	DeletedAt *time.Time         `json:"deletedAt" gorm:"index"`
-	Tasks     []taskService.Task `json:"tasks" gorm:"foreignKey:UserID"` // Добавлено поле
-	// для связи с задачами
+	Tasks     []taskService.Task `json:"tasks" gorm:"foreignKey:UserID"`
 }
 
 // Response представляет структуру ответа для API.

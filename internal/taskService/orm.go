@@ -1,5 +1,7 @@
 package taskService
 
+import "pet_project_1_etap/internal/userService"
+
 // Message представляет простую структуру сообщения.
 type Message struct {
 	ID   int    `json:"id"`
@@ -8,14 +10,13 @@ type Message struct {
 
 // Task представляет задачу с её деталями.
 type Task struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
-	Task    string `json:"task"`
-	IsDone  bool   `json:"is_done"`
-	Message string `json:"message,omitempty"`
-	Text    string `json:"text,omitempty"`
-	UserID  uint   `json:"user_id"` // Новое поле для связи с пользователем
-	//User    userService.User `json:"user" gorm:"foreignKey:UserID"` // Связь с моделью User
-
+	ID      uint             `json:"id" gorm:"primaryKey"`
+	Task    string           `json:"task"`
+	IsDone  bool             `json:"is_done"`
+	Message string           `json:"message,omitempty"`
+	Text    string           `json:"text,omitempty"`
+	UserID  uint             `json:"user_id"` // Новое поле для связи с пользователем
+	User    userService.User `json:"user" gorm:"foreignKey:UserID"`
 }
 
 // Response представляет структуру ответа для API.

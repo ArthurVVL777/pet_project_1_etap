@@ -13,11 +13,20 @@ type TaskRepository interface {
 	UpdateTaskByID(id uint, task Task) (Task, error)
 	PatchTaskByID(id uint, task Task) (Task, error)
 	DeleteTaskByID(id uint) error
+	GetTasksByUserID(userID uint) ([]Task, error)
 }
 
 // Структура taskRepository реализует интерфейс TaskRepository.
 type taskRepository struct {
 	db *gorm.DB
+}
+
+func (r *taskRepository) GetTasksByUserID(userID uint) ([]Task, error) {
+	var tasks []Task
+	if err := r.db.Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
+		return nil, err
+	}
+	return tasks, nil
 }
 
 // NewTaskRepository создает новый экземпляр репозитория задач.
