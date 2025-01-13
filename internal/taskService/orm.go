@@ -27,8 +27,8 @@ type Response struct {
 
 // PostTaskRequestBody определяет тело запроса для создания задачи.
 type PostTaskRequestBody struct {
-	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
-	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+	Task   *string `json:"task"`
+	IsDone *bool   `json:"is_done"`
 	UserID *uint   `json:"user_id,omitempty"`
 }
 
@@ -39,12 +39,12 @@ type PostTasksRequestObject struct {
 
 // PatchTasksJSONRequestBody определяет тело запроса для PATCH задач.
 type PatchTasksJSONRequestBody struct {
-	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
-	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+	Task   *string `json:"task"`
+	IsDone *bool   `json:"is_done"`
 }
 
 type PatchTasksIdRequestObject struct {
-	Id   uint                  `json:"id"` // Указатель на ID задачи
+	Id   uint                  `json:"id"`
 	Body *PatchTaskRequestBody `json:"body"`
 }
 

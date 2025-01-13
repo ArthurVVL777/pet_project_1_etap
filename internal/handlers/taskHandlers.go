@@ -40,7 +40,6 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// Обновите PostTasks для поддержки user_id
 func (h *Handler) PostTasks(ctx echo.Context) error {
 	var request tasks.PostTasksRequestObject
 	if err := ctx.Bind(&request); err != nil {
@@ -50,7 +49,7 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 	taskToCreate := taskService.Task{
 		Task:   *request.Body.Task,
 		IsDone: *request.Body.IsDone,
-		UserID: *request.Body.UserID, // Указываем user_id
+		UserID: *request.Body.UserID,
 	}
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)
@@ -116,7 +115,7 @@ func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {
 func (h *UserHandler) GetTasksForUser(ctx echo.Context) error {
 	userID := ctx.Param("user_id") // Получаем user_id из URL
 
-	// Преобразуем строку в uint (не забудьте обработать ошибку преобразования)
+	// Преобразуем строку в uint
 	id, err := strconv.ParseUint(userID, 10, 32)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")

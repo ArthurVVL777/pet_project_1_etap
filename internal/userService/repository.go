@@ -22,9 +22,12 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-func (r *userRepository) GetTasksForUser(id uint) ([]taskService.Task, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *userRepository) GetTasksForUser(userID uint) ([]taskService.Task, error) {
+	var tasks []taskService.Task
+	if err := r.db.Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
+		return nil, err
+	}
+	return tasks, nil
 }
 
 // NewUserRepository создает новый экземпляр репозитория пользователей.

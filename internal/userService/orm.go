@@ -24,8 +24,8 @@ type Response struct {
 
 // PostUserRequestBody определяет тело запроса для создания пользователя.
 type PostUserRequestBody struct {
-	Email    *string `json:"email"`    // Указатель на email (опционально)
-	Password *string `json:"password"` // Указатель на пароль (опционально)
+	Email    *string `json:"email"`
+	Password *string `json:"password"`
 }
 
 // PostUsersRequestObject определяет структуру запроса для создания пользователей.
@@ -35,12 +35,12 @@ type PostUsersRequestObject struct {
 
 // PatchUserJSONRequestBody определяет тело запроса для PATCH пользователей.
 type PatchUserJSONRequestBody struct {
-	Email    *string `json:"email"`    // Указатель на email (опционально)
-	Password *string `json:"password"` // Указатель на пароль (опционально)
+	Email    *string `json:"email"`
+	Password *string `json:"password"`
 }
 
 type PatchUserIdRequestObject struct {
-	Id   uint                  `json:"id"` // Указатель на ID пользователя
+	Id   uint                  `json:"id"`
 	Body *PatchUserRequestBody `json:"body"`
 }
 
