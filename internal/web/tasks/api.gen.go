@@ -22,6 +22,7 @@ type PatchTaskRequestBody struct {
 
 // PostTaskRequestBody defines model for PostTaskRequestBody.
 type PostTaskRequestBody struct {
+	UserID *uint   `json:"UserID,omitempty"`
 	IsDone *bool   `json:"is_done,omitempty"`
 	Task   *string `json:"task,omitempty"`
 }

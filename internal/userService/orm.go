@@ -1,17 +1,20 @@
 package userService
 
 import (
+	"pet_project_1_etap/internal/taskService"
 	"time"
 )
 
 // User представляет пользователя с его данными.
 type User struct {
-	ID        uint       `json:"id" gorm:"primaryKey"`
-	Email     string     `json:"email" gorm:"unique;not null"`
-	Password  string     `json:"password" gorm:"not null"`
-	CreatedAt time.Time  `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt time.Time  `json:"updatedAt" gorm:"autoUpdateTime"`
-	DeletedAt *time.Time `json:"deletedAt" gorm:"index"`
+	ID        uint               `json:"id" gorm:"primaryKey"`
+	Email     string             `json:"email" gorm:"unique;not null"`
+	Password  string             `json:"password" gorm:"not null"`
+	CreatedAt time.Time          `json:"createdAt" gorm:"autoCreateTime"`
+	UpdatedAt time.Time          `json:"updatedAt" gorm:"autoUpdateTime"`
+	DeletedAt *time.Time         `json:"deletedAt" gorm:"index"`
+	Tasks     []taskService.Task `json:"tasks" gorm:"foreignKey:UserID"` // Добавлено поле
+	// для связи с задачами
 }
 
 // Response представляет структуру ответа для API.

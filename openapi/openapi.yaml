@@ -173,12 +173,16 @@ components:
 
     PostTaskRequestBody:
 
-      type : object
-      properties :
-        task :
-          type : string
-        is_done :
-          type : boolean
+      type: object
+      properties:
+          task:
+            type: string
+          is_done:
+            type: boolean
+          UserID:
+              type: integer
+              format: uint
+
 
     PatchTaskRequestBody:
 

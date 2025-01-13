@@ -48,6 +48,7 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 	taskToCreate := taskService.Task{
 		Task:   *request.Body.Task,
 		IsDone: *request.Body.IsDone,
+		UserID: *request.Body.UserID, // Убедитесь, что это поле присутствует в запросе
 	}
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)

@@ -13,6 +13,9 @@ type Task struct {
 	IsDone  bool   `json:"is_done"`
 	Message string `json:"message,omitempty"`
 	Text    string `json:"text,omitempty"`
+	UserID  uint   `json:"user_id"` // Новое поле для связи с пользователем
+	//User    userService.User `json:"user" gorm:"foreignKey:UserID"` // Связь с моделью User
+
 }
 
 // Response представляет структуру ответа для API.
@@ -25,6 +28,7 @@ type Response struct {
 type PostTaskRequestBody struct {
 	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
 	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
+	UserID *uint   `json:"user_id,omitempty"`
 }
 
 // PostTasksRequestObject определяет структуру запроса для создания задач.
