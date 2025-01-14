@@ -25,10 +25,8 @@ type PatchUserIdRequestObject struct {
 
 // PostUserRequestObject defines model for PostUserRequestObject.
 type PostUserRequestObject struct {
-	Body *struct {
-		Email    *string `json:"email,omitempty"`
-		Password *string `json:"password,omitempty"`
-	} `json:"body,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Password *string `json:"password,omitempty"`
 }
 
 // User defines model for User.
