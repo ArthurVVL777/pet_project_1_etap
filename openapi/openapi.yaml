@@ -1,232 +1,232 @@
-openapi: 3.0.0
-info:
-  title: API
-  version: 1.0.0
-paths:
-  /tasks:
-    get:
-      summary: Get all tasks
-      tags:
-        - tasks
-      responses:
-        '200':
-          description: A list of tasks
+  openapi: 3.0.0
+  info:
+    title: API
+    version: 1.0.0
+  paths:
+    /tasks:
+      get:
+        summary: Get all tasks
+        tags:
+          - tasks
+        responses:
+          '200':
+            description: A list of tasks
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+      post:
+        summary: Create a new task
+        tags:
+          - tasks
+        requestBody:
+          description: The task to create
+          required: true
           content:
             application/json:
               schema:
-                type: array
-                items:
+                $ref: '#/components/schemas/PostTaskRequestBody'
+        responses:
+          '201':
+            description: The created task
+            content:
+              application/json:
+                schema:
                   $ref: '#/components/schemas/Task'
-    post:
-      summary: Create a new task
-      tags:
-        - tasks
-      requestBody:
-        description: The task to create
-        required: true
-        content:
-          application/json:
+
+    /tasks/{id}:
+      patch:
+        summary: Update an existing task
+        tags:
+          - tasks
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the task to update (required)
             schema:
-              $ref: '#/components/schemas/PostTaskRequestBody'
-      responses:
-        '201':
-          description: The created task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-
-  /tasks/{id}:
-    patch:
-      summary: Update an existing task
-      tags:
-        - tasks
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the task to update (required)
-          schema:
-            type: integer
-            format: uint
-      requestBody:
-        description: The task data to update (ID is provided in the URL)
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchTaskRequestBody'
-      responses:
-        '200':
-          description: The updated task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-    delete:
-      summary: Delete a task by ID
-      tags:
-        - tasks
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the task to delete.
-          schema:
-            type: integer
-            format: uint
-      responses:
-        '204':
-          description: Task deleted successfully
-
-  /users:
-    get:
-      summary: Get all users
-      tags:
-        - users
-      responses:
-        '200':
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-    post:
-      summary: Create a new user
-      tags:
-        - users
-      requestBody:
-        description: The user to create
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostUserRequestObject'
-      responses:
-        '201':
-          description: The created user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-
-  /users/{id}:
-    patch:
-      summary: Update an existing user by ID
-      tags:
-        - users
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the user to update (required)
-          schema:
-            type: integer
-            format: uint
-      requestBody:
-        description: The user data to update (ID is provided in the URL)
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchUserIdRequestObject'
-      responses:
-        '200':
-          description: The updated user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-    delete:
-      summary: Delete a user by ID
-      tags:
-        - users
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the user to delete.
-          schema:
-            type: integer
-            format: uint
-      responses:
-        '204':
-          description: User deleted successfully
-
-components:
-
-  schemas:
-
-    Task:
-
-      type : object
-      properties :
-        id :
-          type : integer
-          format : uint
-        task :
-          type : string
-        is_done :
-          type : boolean
-
-    PostTaskRequestBody:
-
-      type: object
-      properties:
-          task:
-            type: string
-          is_done:
-            type: boolean
-          UserID:
               type: integer
               format: uint
+        requestBody:
+          description: The task data to update (ID is provided in the URL)
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchTaskRequestBody'
+        responses:
+          '200':
+            description: The updated task
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Task'
+      delete:
+        summary: Delete a task by ID
+        tags:
+          - tasks
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the task to delete.
+            schema:
+              type: integer
+              format: uint
+        responses:
+          '204':
+            description: Task deleted successfully
+
+    /users:
+      get:
+        summary: Get all users
+        tags:
+          - users
+        responses:
+          '200':
+            description: A list of users
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+      post:
+        summary: Create a new user
+        tags:
+          - users
+        requestBody:
+          description: The user to create
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserRequestObject'
+        responses:
+          '201':
+            description: The created user
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+
+    /users/{id}:
+      patch:
+        summary: Update an existing user by ID
+        tags:
+          - users
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the user to update (required)
+            schema:
+              type: integer
+              format: uint
+        requestBody:
+          description: The user data to update (ID is provided in the URL)
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchUserIdRequestObject'
+        responses:
+          '200':
+            description: The updated user
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+      delete:
+        summary: Delete a user by ID
+        tags:
+          - users
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the user to delete.
+            schema:
+              type: integer
+              format: uint
+        responses:
+          '204':
+            description: User deleted successfully
+
+  components:
+
+    schemas:
+
+      Task:
+
+        type : object
+        properties :
+          id :
+            type : integer
+            format : uint
+          task :
+            type : string
+          is_done :
+            type : boolean
+
+      PostTaskRequestBody:
+
+        type: object
+        properties:
+            task:
+              type: string
+            is_done:
+              type: boolean
+            UserID:
+                type: integer
+                format: uint
 
 
-    PatchTaskRequestBody:
+      PatchTaskRequestBody:
 
-      type : object
-      properties :
-        task :
-          type : string
-        is_done :
-          type : boolean
+        type : object
+        properties :
+          task :
+            type : string
+          is_done :
+            type : boolean
 
-    User :
+      User :
 
-      type : object
-      properties :
-        id :
-          type : integer
-          format : uint
-        email :
-          type : string
-        password :
-          type : string
+        type : object
+        properties :
+          id :
+            type : integer
+            format : uint
+          email :
+            type : string
+          password :
+            type : string
 
-    PostUserRequestObject :
+      PostUserRequestObject :
 
-      type : object
-      properties :
-        body :
-          type : object
-          properties :
-            email :
-              type : string
-            password :
-              type : string
+        type : object
+        properties :
+          body :
+            type : object
+            properties :
+              email :
+                type : string
+              password :
+                type : string
 
-    PatchUserIdRequestObject :
+      PatchUserIdRequestObject :
 
-      type : object
-      properties :
-        id :
-          type : integer
-        body :
-          type : object
-          properties :
-            email :
-              type : string
-            password :
-              type : string
+        type : object
+        properties :
+          id :
+            type : integer
+          body :
+            type : object
+            properties :
+              email :
+                type : string
+              password :
+                type : string

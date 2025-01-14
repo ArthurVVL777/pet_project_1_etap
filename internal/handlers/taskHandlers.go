@@ -46,6 +46,11 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
+	// Проверка на nil для полей Task и UserID
+	if request.Body.Task == nil || request.Body.UserID == nil {
+		return ctx.JSON(http.StatusBadRequest, "Task and UserID must not be empty")
+	}
+
 	taskToCreate := taskService.Task{
 		Task:   *request.Body.Task,
 		IsDone: *request.Body.IsDone,
