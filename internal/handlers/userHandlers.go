@@ -45,7 +45,6 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	// Проверка на nil для полей Email и Password
 	if request.Body == nil || request.Body.Email == nil || request.Body.Password == nil {
 		return ctx.JSON(http.StatusBadRequest, "Email and password must not be empty")
 	}
