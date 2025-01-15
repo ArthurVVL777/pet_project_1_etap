@@ -29,10 +29,14 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 
 	response := make(tasks.GetTasks200JSONResponse, 0, len(allTasks))
 	for _, tsk := range allTasks {
+		if tsk.UserID == 0 { // Проверка на UserID
+			continue // Пропустить задачу, если UserID равен 0
+		}
 		task := tasks.Task{
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: &tsk.IsDone,
+			UserID: &tsk.UserID,
 		}
 		response = append(response, task)
 	}
