@@ -26,12 +26,14 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
 	}
 
+	// Формируем список задач с добавлением поля user_id
 	response := make(tasks.GetTasks200JSONResponse, 0, len(allTasks))
 	for _, tsk := range allTasks {
 		task := tasks.Task{
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: &tsk.IsDone,
+			UserID: &tsk.UserID, // Добавляем поле user_id
 		}
 		response = append(response, task)
 	}
