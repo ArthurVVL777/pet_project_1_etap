@@ -50,4 +50,3 @@ type PatchTaskRequestBody struct {
 	Task   *string `json:"task"`    // Указатель на текст задачи (опционально)
 	IsDone *bool   `json:"is_done"` // Указатель на статус завершенности (опционально)
 }
-type GetTasks200JSONResponse []Task

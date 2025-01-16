@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"pet_project_1_etap/internal/userService"
@@ -40,68 +39,50 @@ func (h *UserHandler) GetUsers(ctx echo.Context) error {
 }
 
 func (u *UserHandler) PostUsers(ctx echo.Context) error {
-	var request users.PostUsersRequestObject
+	var request users.User
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	if request.Body == nil || request.Body.Email == nil || request.Body.Password == nil {
-		return ctx.JSON(http.StatusBadRequest, "Email and password must not be empty")
+	if *request.Email == "" || *request.Password == "" {
+		return ctx.JSON(http.StatusBadRequest, "Email and Password must not be empty")
 	}
 
-	user := userService.User{
-		Email:    *request.Body.Email,
-		Password: *request.Body.Password,
-	}
-
-	createdUser, err := u.Service.CreateUser(user)
+	createdUser, err := u.Service.CreateUser(userService.User{
+		Email:    *request.Email,
+		Password: *request.Password,
+	})
 	if err != nil {
-		log.Printf("Error creating user: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, "Error creating user")
 	}
 
-	response := users.User{
-		Id:       &createdUser.ID,
-		Email:    &createdUser.Email,
-		Password: &createdUser.Password,
-	}
-
-	return ctx.JSON(http.StatusCreated, response)
+	return ctx.JSON(http.StatusCreated, createdUser)
 }
 
 func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
-	var request users.PatchUserIdRequestObject
+	var request users.User
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
 	existingUser, err := u.Service.GetUserByID(id)
 	if err != nil {
-		log.Printf("Error fetching user with ID %d: %v", id, err)
-		return ctx.JSON(http.StatusNotFound, fmt.Sprintf("user not found: %v", err))
+		return ctx.JSON(http.StatusNotFound, "User not found")
 	}
 
-	if request.Body.Email != nil {
-		existingUser.Email = *request.Body.Email
+	if *request.Email != "" {
+		existingUser.Email = *request.Email
 	}
-
-	if request.Body.Password != nil {
-		existingUser.Password = *request.Body.Password
+	if *request.Password != "" {
+		existingUser.Password = *request.Password
 	}
 
 	updatedUser, err := u.Service.UpdateUserByID(id, existingUser)
 	if err != nil {
-		log.Printf("Error updating user with ID %d: %v", id, err)
-		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("failed to update user: %v", err))
+		return ctx.JSON(http.StatusInternalServerError, "Error updating user")
 	}
 
-	response := users.User{
-		Id:       &updatedUser.ID,
-		Email:    &updatedUser.Email,
-		Password: &updatedUser.Password,
-	}
-
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, updatedUser)
 }
 
 func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {

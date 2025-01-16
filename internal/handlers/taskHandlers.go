@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,14 +28,10 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 
 	response := make(tasks.GetTasks200JSONResponse, 0, len(allTasks))
 	for _, tsk := range allTasks {
-		if tsk.UserID == 0 { // Проверка на UserID
-			continue // Пропустить задачу, если UserID равен 0
-		}
 		task := tasks.Task{
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: &tsk.IsDone,
-			UserID: &tsk.UserID,
 		}
 		response = append(response, task)
 	}
@@ -45,70 +40,51 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 }
 
 func (h *Handler) PostTasks(ctx echo.Context) error {
-	var request tasks.PostTasksRequestObject
+	var request tasks.PostTaskRequestBody
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	// Проверка на nil для полей Task и UserID
-	if request.Body.Task == nil || request.Body.UserID == nil {
+	if request.Task == nil || *request.Task == "" || request.UserID == nil {
 		return ctx.JSON(http.StatusBadRequest, "Task and UserID must not be empty")
 	}
 
-	taskToCreate := taskService.Task{
-		Task:   *request.Body.Task,
-		IsDone: *request.Body.IsDone,
-		UserID: *request.Body.UserID,
-	}
-
-	createdTask, err := h.Service.CreateTask(taskToCreate)
+	createdTask, err := h.Service.CreateTask(taskService.Task{
+		Task:   *request.Task,
+		IsDone: *request.IsDone,
+		UserID: *request.UserID,
+	})
 	if err != nil {
-		log.Printf("Error creating task: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, "Error creating task")
 	}
 
-	response := tasks.PostTasks201JSONResponse{
-		Id:     &createdTask.ID,
-		Task:   &createdTask.Task,
-		IsDone: &createdTask.IsDone,
-	}
-
-	return ctx.JSON(http.StatusCreated, response)
+	return ctx.JSON(http.StatusCreated, createdTask)
 }
 
 func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
-	var request tasks.PatchTasksIdRequestObject
+	var request tasks.PatchTaskRequestBody
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
 	existingTask, err := h.Service.GetTaskByID(id)
 	if err != nil {
-		log.Printf("Error fetching task with ID %d: %v", id, err)
-		return ctx.JSON(http.StatusNotFound, fmt.Sprintf("task not found: %v", err))
+		return ctx.JSON(http.StatusNotFound, "Task not found")
 	}
 
-	if request.Body.Task != nil {
-		existingTask.Task = *request.Body.Task
+	if request.Task != nil && *request.Task != "" {
+		existingTask.Task = *request.Task
 	}
-
-	if request.Body.IsDone != nil {
-		existingTask.IsDone = *request.Body.IsDone
+	if request.IsDone != nil {
+		existingTask.IsDone = *request.IsDone
 	}
 
 	updatedTask, err := h.Service.UpdateTaskByID(id, existingTask)
 	if err != nil {
-		log.Printf("Error updating task with ID %d: %v", id, err)
-		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("failed to update task: %v", err))
+		return ctx.JSON(http.StatusInternalServerError, "Error updating task")
 	}
 
-	response := tasks.PatchTasksId200JSONResponse{
-		Id:     &updatedTask.ID,
-		Task:   &updatedTask.Task,
-		IsDone: &updatedTask.IsDone,
-	}
-
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, updatedTask)
 }
 
 func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {

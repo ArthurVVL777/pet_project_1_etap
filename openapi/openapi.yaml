@@ -170,9 +170,6 @@ components:
           type : string
         is_done :
           type : boolean
-        user_ID:
-          type: integer
-          format: uint
 
     PostTaskRequestBody:
 
