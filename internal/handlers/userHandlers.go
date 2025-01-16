@@ -60,7 +60,7 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 }
 
 func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
-	var request users.User
+	var request userService.PatchUserRequestBody
 	if err := ctx.Bind(&request); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
@@ -70,10 +70,10 @@ func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusNotFound, "User not found")
 	}
 
-	if *request.Email != "" {
+	if request.Email != nil {
 		existingUser.Email = *request.Email
 	}
-	if *request.Password != "" {
+	if request.Password != nil {
 		existingUser.Password = *request.Password
 	}
 
