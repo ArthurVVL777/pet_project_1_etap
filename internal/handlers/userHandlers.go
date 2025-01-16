@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"pet_project_1_etap/internal/userService"
 	"pet_project_1_etap/internal/web/users"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -109,4 +110,36 @@ func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {
 	}
 
 	return ctx.NoContent(http.StatusNoContent)
+}
+
+func (h *Handler) GetTasksForUser(ctx echo.Context) error {
+	userIDParam := ctx.Param("user_id") // Получаем user_id из URL
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")
+	}
+
+	tasks, err := h.Service.GetTasksForUser(uint(userID))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
+	}
+
+	return ctx.JSON(http.StatusOK, tasks)
+}
+
+func (h *UserHandler) GetUsersUserIdTasks(ctx echo.Context, userId uint) error {
+	// Преобразование userId из uint в строку, если требуется
+	userIDParam := ctx.Param("user_id")
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")
+	}
+
+	// Получение задач пользователя через сервис
+	tasks, err := h.Service.GetTasksForUser(uint(userID))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks for user")
+	}
+
+	return ctx.JSON(http.StatusOK, tasks)
 }

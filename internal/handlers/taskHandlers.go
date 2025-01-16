@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"net/http"
-	"strconv"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
 	"pet_project_1_etap/internal/taskService"
 	"pet_project_1_etap/internal/web/tasks"
 )
@@ -112,21 +110,4 @@ func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {
 	}
 
 	return ctx.NoContent(http.StatusNoContent) // Возвращаем успешный ответ без тела
-}
-
-func (h *UserHandler) GetTasksForUser(ctx echo.Context) error {
-	userID := ctx.Param("user_id") // Получаем user_id из URL
-
-	// Преобразуем строку в uint
-	id, err := strconv.ParseUint(userID, 10, 32)
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")
-	}
-
-	tasks, err := h.Service.GetTasksForUser(uint(id))
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
-	}
-
-	return ctx.JSON(http.StatusOK, tasks)
 }

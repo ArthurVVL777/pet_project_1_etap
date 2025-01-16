@@ -1,10 +1,9 @@
 package userService
 
 import (
-	"context"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"pet_project_1_etap/internal/taskService"
-	"pet_project_1_etap/internal/web/users"
 )
 
 type UserRepository interface {
@@ -97,8 +96,9 @@ func (r *userRepository) DeleteUserByID(id uint) error {
 
 // ServerInterface определяет методы для работы с пользователями.
 type ServerInterface interface {
-	GetUsers(ctx context.Context) ([]users.User, error)
-	PostUser(ctx context.Context, user users.User) (users.User, error)
-	PatchUserByID(ctx context.Context, id uint, user users.User) (users.User, error)
-	DeleteUserByID(ctx context.Context, id uint) error
+	GetUsers(ctx echo.Context) error
+	PostUsers(ctx echo.Context) error
+	PatchUsersId(ctx echo.Context, id uint) error
+	DeleteUsersId(ctx echo.Context, id uint) error
+	GetUsersUserIdTasks(ctx echo.Context, userId uint) error // Добавленный метод
 }
