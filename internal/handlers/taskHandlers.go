@@ -58,7 +58,14 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error creating task")
 	}
 
-	return ctx.JSON(http.StatusCreated, createdTask)
+	// Удаляем ненужные поля из ответа
+	response := tasks.Task{
+		Id:     &createdTask.ID,
+		Task:   &createdTask.Task,
+		IsDone: &createdTask.IsDone,
+		// Поле tasks не трогаем
+	}
+	return ctx.JSON(http.StatusCreated, response)
 }
 
 func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
@@ -72,6 +79,7 @@ func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusNotFound, "Task not found")
 	}
 
+	// Обновляем только те поля, которые были указаны в запросе
 	if request.Task != nil && *request.Task != "" {
 		existingTask.Task = *request.Task
 	}
@@ -84,7 +92,14 @@ func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error updating task")
 	}
 
-	return ctx.JSON(http.StatusOK, updatedTask)
+	// Удаляем ненужные поля из ответа
+	response := tasks.Task{
+		Id:     &updatedTask.ID,
+		Task:   &updatedTask.Task,
+		IsDone: &updatedTask.IsDone,
+		// Поле tasks не трогаем
+	}
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (h *Handler) DeleteTasksId(ctx echo.Context, id uint) error {

@@ -44,10 +44,12 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, "Invalid request body")
 	}
 
-	if *request.Email == "" || *request.Password == "" {
+	// Проверяем обязательные поля
+	if request.Email == nil || *request.Email == "" || request.Password == nil || *request.Password == "" {
 		return ctx.JSON(http.StatusBadRequest, "Email and Password must not be empty")
 	}
 
+	// Создаем нового пользователя
 	createdUser, err := u.Service.CreateUser(userService.User{
 		Email:    *request.Email,
 		Password: *request.Password,
@@ -56,7 +58,14 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error creating user")
 	}
 
-	return ctx.JSON(http.StatusCreated, createdUser)
+	// Формируем ответ без ненужных полей
+	response := users.User{
+		Id:       &createdUser.ID,
+		Email:    &createdUser.Email,
+		Password: &createdUser.Password,
+		//Tasks:    createdUser.Tasks, // Возвращаем поле tasks без изменений
+	}
+	return ctx.JSON(http.StatusCreated, response)
 }
 
 func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
@@ -70,6 +79,7 @@ func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusNotFound, "User not found")
 	}
 
+	// Обновляем только те поля, которые были указаны в запросе
 	if request.Email != nil {
 		existingUser.Email = *request.Email
 	}
@@ -82,7 +92,14 @@ func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error updating user")
 	}
 
-	return ctx.JSON(http.StatusOK, updatedUser)
+	// Удаляем ненужные поля из ответа
+	response := users.User{
+		Id:       &updatedUser.ID,
+		Email:    &updatedUser.Email,
+		Password: &updatedUser.Password,
+		//Tasks:    updatedUser.Tasks, // Поле tasks возвращаем, как есть
+	}
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {
