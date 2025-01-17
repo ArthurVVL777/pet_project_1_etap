@@ -31,7 +31,7 @@ func (h *Handler) GetTasks(ctx echo.Context) error {
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: &tsk.IsDone,
-			UserID: &tsk.UserID, // Добавляем поле user_id
+			UserID: &tsk.UserID,
 		}
 		response = append(response, task)
 	}
@@ -58,12 +58,10 @@ func (h *Handler) PostTasks(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error creating task")
 	}
 
-	// Удаляем ненужные поля из ответа
 	response := tasks.Task{
 		Id:     &createdTask.ID,
 		Task:   &createdTask.Task,
 		IsDone: &createdTask.IsDone,
-		// Поле tasks не трогаем
 	}
 	return ctx.JSON(http.StatusCreated, response)
 }
@@ -92,12 +90,10 @@ func (h *Handler) PatchTasksId(ctx echo.Context, id uint) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error updating task")
 	}
 
-	// Удаляем ненужные поля из ответа
 	response := tasks.Task{
 		Id:     &updatedTask.ID,
 		Task:   &updatedTask.Task,
 		IsDone: &updatedTask.IsDone,
-		// Поле tasks не трогаем
 	}
 	return ctx.JSON(http.StatusOK, response)
 }

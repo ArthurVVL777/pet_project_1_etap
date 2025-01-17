@@ -59,12 +59,11 @@ func (u *UserHandler) PostUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error creating user")
 	}
 
-	// Формируем ответ без ненужных полей
+	// Формируем ответ
 	response := users.User{
 		Id:       &createdUser.ID,
 		Email:    &createdUser.Email,
 		Password: &createdUser.Password,
-		//Tasks:    createdUser.Tasks, // Возвращаем поле tasks без изменений
 	}
 	return ctx.JSON(http.StatusCreated, response)
 }
@@ -98,7 +97,6 @@ func (u *UserHandler) PatchUsersId(ctx echo.Context, id uint) error {
 		Id:       &updatedUser.ID,
 		Email:    &updatedUser.Email,
 		Password: &updatedUser.Password,
-		//Tasks:    updatedUser.Tasks, // Поле tasks возвращаем, как есть
 	}
 	return ctx.JSON(http.StatusOK, response)
 }
@@ -128,7 +126,7 @@ func (h *Handler) GetTasksForUser(ctx echo.Context) error {
 }
 
 func (h *UserHandler) GetUsersUserIdTasks(ctx echo.Context, userId uint) error {
-	// Преобразование userId из uint в строку, если требуется
+	// Преобразование userId из uint в строку
 	userIDParam := ctx.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
 	if err != nil {

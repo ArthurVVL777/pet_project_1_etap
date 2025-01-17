@@ -100,5 +100,5 @@ type ServerInterface interface {
 	PostUsers(ctx echo.Context) error
 	PatchUsersId(ctx echo.Context, id uint) error
 	DeleteUsersId(ctx echo.Context, id uint) error
-	GetUsersUserIdTasks(ctx echo.Context, userId uint) error // Добавленный метод
+	GetUsersUserIdTasks(ctx echo.Context, userId uint) error
 }
