@@ -13,7 +13,7 @@ type Task struct {
 	IsDone  bool   `json:"is_done"`
 	Message string `json:"message,omitempty"`
 	Text    string `json:"text,omitempty"`
-	UserID  uint   `json:"user_id"` // поле для связи с пользователем
+	UserID  uint   `json:"-"` // поле для связи с пользователем
 
 }
 

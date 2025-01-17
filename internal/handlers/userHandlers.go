@@ -111,7 +111,7 @@ func (u *UserHandler) DeleteUsersId(ctx echo.Context, id uint) error {
 }
 
 func (h *Handler) GetTasksForUser(ctx echo.Context) error {
-	userIDParam := ctx.Param("user_id") // Получаем user_id из URL
+	userIDParam := ctx.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid user ID")
@@ -122,7 +122,19 @@ func (h *Handler) GetTasksForUser(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Error fetching tasks")
 	}
 
-	return ctx.JSON(http.StatusOK, tasks)
+	// Убираем поле user_id из каждого объекта задачи
+	response := make([]map[string]interface{}, 0, len(tasks))
+	for _, task := range tasks {
+		taskData := map[string]interface{}{
+			"id":      task.ID,
+			"task":    task.Task,
+			"is_done": task.IsDone,
+			// user_id намеренно исключаем
+		}
+		response = append(response, taskData)
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (h *UserHandler) GetUsersUserIdTasks(ctx echo.Context, userId uint) error {
